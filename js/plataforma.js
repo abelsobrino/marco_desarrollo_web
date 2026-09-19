@@ -16,6 +16,34 @@ const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+
+function distanciaKm(lat1, lon1, lat2, lon2) {
+  if ([lat1, lon1, lat2, lon2].some((v) => v === null || v === undefined))
+    return null;
+  const R = 6371;
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function distritoCoords(id) {
+  const d = catalogs.distritos.find((x) => x.id === id);
+  return d && d.latitud != null && d.longitud != null
+    ? { lat: d.latitud, lon: d.longitud }
+    : null;
+}
+function kmDesdeMiDistrito(distritoIdDestino) {
+  if (!profile?.distrito_id || !distritoIdDestino) return null;
+  const origen = distritoCoords(profile.distrito_id);
+  const destino = distritoCoords(distritoIdDestino);
+  return origen && destino
+    ? distanciaKm(origen.lat, origen.lon, destino.lat, destino.lon)
+    : null;
+}
+
 let inboxPeer = null;
 let toastTimer,
   inboxTimer,
@@ -395,10 +423,20 @@ function workerCard(p) {
   const photo = p.foto_path
     ? db.storage.from("avatares").getPublicUrl(p.foto_path).data.publicUrl
     : null;
-  return `<article>${photo ? `<img class="avatar" src="${esc(photo)}" alt="Foto de ${esc(p.nombre)}" loading="lazy">` : ""}<h2>${esc(p.nombre)}</h2><p class="muted">${esc(nameOf("distritos", p.distrito_id))}</p><div>${skills.map((s) => `<span class="tag">${esc(nameOf("oficios", s.oficio_id))} · ${s.experiencia} años</span>`).join("")}</div><p>${esc(p.presentacion || "Sin presentación todavía.")}</p><p>${avg ? `★ ${avg} / 5 · ${ratings.length} calificaciones` : "Sin calificaciones aún"}</p><button data-publish>Publicar un trabajo</button><p class="muted">Publica en su oficio para recibir postulaciones.</p></article>`;
+  const km = kmDesdeMiDistrito(p.distrito_id);
+  const distanciaTxt =
+    km !== null
+      ? `<p class="muted">📍 A ${km.toFixed(1)} km de ti (aprox.)</p>`
+      : "";
+  return `<article>${photo ? `<img class="avatar" src="${esc(photo)}" alt="Foto de ${esc(p.nombre)}" loading="lazy">` : ""}<h2>${esc(p.nombre)}</h2><p class="muted">${esc(nameOf("distritos", p.distrito_id))}</p>${distanciaTxt}<div>${skills.map((s) => `<span class="tag">${esc(nameOf("oficios", s.oficio_id))} · ${s.experiencia} años</span>`).join("")}</div><p>${esc(p.presentacion || "Sin presentación todavía.")}</p><p>${avg ? `★ ${avg} / 5 · ${ratings.length} calificaciones` : "Sin calificaciones aún"}</p><button data-publish>Publicar un trabajo</button><p class="muted">Publica en su oficio para recibir postulaciones.</p></article>`;
 }
 function jobCard(p, extra = "") {
-  return `<article><span class="tag">${esc(p.estado)}</span><h2>${esc(p.titulo)}</h2><p>${esc(p.descripcion)}</p><p class="muted">${esc(nameOf("oficios", p.oficio_id))} · ${esc(nameOf("distritos", p.distrito_id))}<br>Fecha: ${esc(p.fecha)}</p><p><strong>${money(p.pago)}</strong> · ${esc(p.modalidad_pago)}</p>${extra}</article>`;
+  const km = kmDesdeMiDistrito(p.distrito_id);
+  const distanciaTxt =
+    km !== null
+      ? `<p class="muted">📍 A ${km.toFixed(1)} km de ti (aprox.)</p>`
+      : "";
+  return `<article><span class="tag">${esc(p.estado)}</span><h2>${esc(p.titulo)}</h2><p>${esc(p.descripcion)}</p><p class="muted">${esc(nameOf("oficios", p.oficio_id))} · ${esc(nameOf("distritos", p.distrito_id))}<br>Fecha: ${esc(p.fecha)}</p>${distanciaTxt}<p><strong>${money(p.pago)}</strong> · ${esc(p.modalidad_pago)}</p>${extra}</article>`;
 }
 async function search() {
   const generation = ++searchGeneration;
