@@ -44,6 +44,18 @@ function kmDesdeMiDistrito(distritoIdDestino) {
     : null;
 }
 
+function ordenarPorDistancia(rows) {
+  return rows
+    .map((r) => ({ r, km: kmDesdeMiDistrito(r.distrito_id) }))
+    .sort((a, b) => {
+      if (a.km === null && b.km === null) return 0;
+      if (a.km === null) return 1;
+      if (b.km === null) return -1;
+      return a.km - b.km;
+    })
+    .map((x) => x.r);
+}
+
 let inboxPeer = null;
 let toastTimer,
   inboxTimer,
@@ -455,6 +467,7 @@ async function search() {
       .eq("ofrece_servicios", true)
       .order("nombre")
       .limit(100);
+    if (user) query = query.neq("id", user.id); // no mostrarte a ti mismo
     if (district) query = query.eq("distrito_id", district);
     rows = await checked(query);
     rows = rows.filter(
@@ -471,6 +484,7 @@ async function search() {
             .toLocaleLowerCase("es")
             .includes(term)),
     );
+    rows = ordenarPorDistancia(rows);
     if (generation !== searchGeneration) return;
     $("#resultados").innerHTML = rows.map(workerCard).join("");
     $("#resultados")
@@ -492,6 +506,7 @@ async function search() {
         !term ||
         `${p.titulo} ${p.descripcion}`.toLocaleLowerCase("es").includes(term),
     );
+    rows = ordenarPorDistancia(rows);
     if (generation !== searchGeneration) return;
     $("#resultados").innerHTML = rows
       .map((p) =>
