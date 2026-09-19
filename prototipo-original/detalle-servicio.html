@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ChambaCerca | Detalle del servicio</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg border-bottom">
+
+        <div class="container">
+
+            <a class="navbar-brand fs-4" href="index.html">
+                Chamba<span>Cerca</span>
+            </a>
+
+            <a href="javascript:history.back()" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i>
+                Volver
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- DETALLE DEL SERVICIO -->
+
+    <section class="py-5">
+
+        <div class="container">
+
+            <div id="detalleServicio" class="row justify-content-center">
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <script>
+
+
+        // ========================================
+        // OBTENER SERVICIO SELECCIONADO
+        // ========================================
+
+        const parametros =
+            new URLSearchParams(window.location.search);
+
+        const servicioSeleccionado =
+            parametros.get("servicio");
+
+
+        // ========================================
+        // INFORMACIÓN DE SERVICIOS
+        // ========================================
+
+        const detalles = {
+
+
+            // -------------------------------
+            // GASFITERÍA
+            // -------------------------------
+
+            "reparacion-fugas": {
+
+                titulo: "Reparación de fugas de agua",
+
+                categoria: "Gasfitería",
+
+                descripcion:
+                    "Servicio especializado para detectar y solucionar fugas de agua en tuberías, grifos y conexiones de tu hogar. Nuestros trabajadores revisarán el problema y realizarán la reparación necesaria para evitar desperdicio de agua y daños mayores.",
+
+                condiciones: [
+                    "El área de trabajo debe estar accesible.",
+                    "El cliente debe permitir el acceso al lugar donde se encuentra la fuga."
+                ],
+
+                noIncluye: [
+                    "Reemplazo completo de tuberías no relacionadas con la fuga.",
+                    "Trabajos de albañilería derivados de la reparación.",
+                    "Materiales adicionales no considerados en el servicio."
+                ],
+
+                restricciones:
+                    "El servicio está sujeto a la evaluación del trabajador.",
+
+                garantia:
+                    "1 año sobre la reparación realizada.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            },
+
+
+            "instalacion-grifos": {
+
+                titulo: "Instalación de grifos",
+
+                categoria: "Gasfitería",
+
+                descripcion:
+                    "Instalación profesional de grifos para cocina, baño y otros espacios del hogar. El trabajador realizará la instalación y verificará que las conexiones funcionen correctamente.",
+
+                condiciones: [
+                    "El grifo debe encontrarse disponible para su instalación.",
+                    "Las conexiones de agua deben estar accesibles."
+                ],
+
+                noIncluye: [
+                    "Compra del grifo.",
+                    "Modificación de tuberías que requiera trabajos adicionales."
+                ],
+
+                restricciones:
+                    "La instalación depende de las condiciones existentes en el lugar.",
+
+                garantia:
+                    "1 año sobre la instalación.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            },
+
+
+            "destape-tuberias": {
+
+                titulo: "Destape de tuberías",
+
+                categoria: "Gasfitería",
+
+                descripcion:
+                    "Servicio para solucionar obstrucciones en tuberías y sistemas de desagüe del hogar.",
+
+                condiciones: [
+                    "El punto de acceso debe encontrarse disponible.",
+                    "El área debe estar libre de objetos que dificulten el trabajo."
+                ],
+
+                noIncluye: [
+                    "Cambio completo de tuberías.",
+                    "Obras de albañilería."
+                ],
+
+                restricciones:
+                    "El servicio dependerá del nivel de obstrucción.",
+
+                garantia:
+                    "30 días.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            },
+
+
+            // -------------------------------
+            // ELECTRICIDAD
+            // -------------------------------
+
+            "instalacion-luces": {
+
+                titulo: "Instalación de luces",
+
+                categoria: "Electricidad",
+
+                descripcion:
+                    "Servicio de instalación de lámparas, focos y sistemas de iluminación para diferentes espacios del hogar.",
+
+                condiciones: [
+                    "El punto eléctrico debe encontrarse habilitado.",
+                    "El producto que se instalará debe estar disponible."
+                ],
+
+                noIncluye: [
+                    "Compra de lámparas o focos.",
+                    "Instalación de nuevos puntos eléctricos."
+                ],
+
+                restricciones:
+                    "Se debe verificar previamente el estado de la instalación.",
+
+                garantia:
+                    "1 año sobre la instalación.",
+
+                precio:
+                    "Desde S/ 75.00"
+
+            },
+
+
+            "reparacion-circuitos": {
+
+                titulo: "Reparación de circuitos eléctricos",
+
+                categoria: "Electricidad",
+
+                descripcion:
+                    "Revisión y reparación de fallas en circuitos eléctricos del hogar.",
+
+                condiciones: [
+                    "El trabajador debe tener acceso al tablero eléctrico.",
+                    "El área debe encontrarse despejada."
+                ],
+
+                noIncluye: [
+                    "Cambio completo de la instalación eléctrica.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "El servicio está sujeto a una evaluación previa.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 75.00"
+
+            },
+
+
+            // -------------------------------
+            // CARPINTERÍA
+            // -------------------------------
+
+            "muebles-medida": {
+
+                titulo: "Fabricación de muebles a medida",
+
+                categoria: "Carpintería",
+
+                descripcion:
+                    "Diseño y fabricación de muebles personalizados de acuerdo con las necesidades y dimensiones del cliente.",
+
+                condiciones: [
+                    "El cliente debe indicar las medidas aproximadas.",
+                    "Se debe definir previamente el diseño."
+                ],
+
+                noIncluye: [
+                    "Materiales especiales no contemplados.",
+                    "Modificaciones posteriores al diseño aprobado."
+                ],
+
+                restricciones:
+                    "El precio final dependerá del diseño y materiales.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 60.00"
+
+            },
+
+
+            "reparacion-muebles": {
+
+                titulo: "Reparación de muebles",
+
+                categoria: "Carpintería",
+
+                descripcion:
+                    "Reparación y mantenimiento de muebles de madera para recuperar su funcionalidad y apariencia.",
+
+                condiciones: [
+                    "El mueble debe encontrarse disponible para evaluación."
+                ],
+
+                noIncluye: [
+                    "Fabricación de muebles nuevos.",
+                    "Cambio completo de piezas no relacionadas con la reparación."
+                ],
+
+                restricciones:
+                    "El precio puede variar según el daño.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 55.00"
+
+            },
+
+
+            // -------------------------------
+            // PINTURA
+            // -------------------------------
+
+            "pintura-interior": {
+
+                titulo: "Pintura de interiores",
+
+                categoria: "Pintura",
+
+                descripcion:
+                    "Servicio profesional de pintura para renovar y mejorar diferentes espacios interiores del hogar.",
+
+                condiciones: [
+                    "La superficie debe encontrarse libre de objetos.",
+                    "Las paredes deben estar preparadas para pintar."
+                ],
+
+                noIncluye: [
+                    "Reparaciones estructurales.",
+                    "Tratamiento de humedad.",
+                    "Compra de muebles."
+                ],
+
+                restricciones:
+                    "El tiempo de trabajo dependerá del tamaño del ambiente.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 40.00"
+
+            },
+
+
+            "pintura-exterior": {
+
+                titulo: "Pintura de exteriores",
+
+                categoria: "Pintura",
+
+                descripcion:
+                    "Pintura profesional para fachadas, patios y diferentes superficies exteriores.",
+
+                condiciones: [
+                    "La superficie debe estar accesible.",
+                    "El clima debe permitir realizar el trabajo."
+                ],
+
+                noIncluye: [
+                    "Reparaciones estructurales.",
+                    "Tratamiento especializado de humedad."
+                ],
+
+                restricciones:
+                    "El servicio puede reprogramarse por condiciones climáticas.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 45.00"
+
+            },
+
+
+            // -------------------------------
+            // LIMPIEZA
+            // -------------------------------
+
+            "limpieza-profunda": {
+
+                titulo: "Limpieza profunda",
+
+                categoria: "Limpieza",
+
+                descripcion:
+                    "Servicio completo de limpieza para viviendas y diferentes espacios del hogar.",
+
+                condiciones: [
+                    "El área debe encontrarse disponible para trabajar.",
+                    "Los objetos de valor deben ser retirados o protegidos."
+                ],
+
+                noIncluye: [
+                    "Reparaciones.",
+                    "Eliminación de residuos peligrosos."
+                ],
+
+                restricciones:
+                    "El tiempo dependerá del tamaño y estado del espacio.",
+
+                garantia:
+                    "Garantía de satisfacción.",
+
+                precio:
+                    "Desde S/ 35.00"
+
+            },
+
+
+            "limpieza-oficinas": {
+
+                titulo: "Limpieza de oficinas",
+
+                categoria: "Limpieza",
+
+                descripcion:
+                    "Limpieza profesional para oficinas y espacios de trabajo.",
+
+                condiciones: [
+                    "Las áreas deben encontrarse disponibles."
+                ],
+
+                noIncluye: [
+                    "Mantenimiento de equipos electrónicos.",
+                    "Reparaciones."
+                ],
+
+                restricciones:
+                    "El precio puede variar según el tamaño del local.",
+
+                garantia:
+                    "Garantía de satisfacción.",
+
+                precio:
+                    "Desde S/ 40.00"
+
+            },
+
+
+            // -------------------------------
+            // REPARACIONES
+            // -------------------------------
+
+            "reparacion-general": {
+
+                titulo: "Reparación general del hogar",
+
+                categoria: "Reparaciones",
+
+                descripcion:
+                    "Servicio de reparación general para solucionar diferentes problemas y desperfectos dentro del hogar.",
+
+                condiciones: [
+                    "El área debe estar disponible para realizar la evaluación.",
+                    "El trabajador debe poder acceder al lugar del problema."
+                ],
+
+                noIncluye: [
+                    "Materiales adicionales.",
+                    "Modificaciones estructurales importantes."
+                ],
+
+                restricciones:
+                    "El servicio dependerá de la evaluación realizada.",
+
+                garantia:
+                    "1 año sobre el trabajo realizado.",
+
+                precio:
+                    "Desde S/ 55.00"
+
+            },
+
+
+            "reparacion-estructuras": {
+
+                titulo: "Reparación de estructuras",
+
+                categoria: "Reparaciones",
+
+                descripcion:
+                    "Servicio especializado para reparar diferentes estructuras y elementos del hogar.",
+
+                condiciones: [
+                    "El área debe ser accesible.",
+                    "Se realizará una evaluación previa."
+                ],
+
+                noIncluye: [
+                    "Construcciones completamente nuevas.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "El precio dependerá del tipo de reparación.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 60.00"
+
+            },
+
+
+            "mantenimiento-agua": {
+
+                titulo: "Mantenimiento de instalaciones de agua",
+
+                categoria: "Gasfitería",
+
+                descripcion:
+                    "Servicio de revisión y mantenimiento preventivo de las instalaciones de agua del hogar para detectar posibles problemas y mantener su correcto funcionamiento.",
+
+                condiciones: [
+                    "Las instalaciones deben encontrarse accesibles.",
+                    "El cliente debe permitir el acceso a las zonas que serán revisadas."
+                ],
+
+                noIncluye: [
+                    "Reemplazo completo de tuberías.",
+                    "Obras de albañilería.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "El servicio dependerá del estado de las instalaciones.",
+
+                garantia:
+                    "30 días sobre el mantenimiento realizado.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            },
+
+
+            "instalacion-tomacorrientes": {
+
+                titulo: "Instalación de tomacorrientes",
+
+                categoria: "Electricidad",
+
+                descripcion:
+                    "Instalación y reemplazo de tomacorrientes e interruptores para mejorar la funcionalidad y seguridad de las instalaciones eléctricas del hogar.",
+
+                condiciones: [
+                    "El punto de instalación debe encontrarse accesible.",
+                    "La instalación eléctrica existente debe permitir el trabajo."
+                ],
+
+                noIncluye: [
+                    "Creación de nuevos circuitos eléctricos.",
+                    "Cambio completo de cableado.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "Se realizará una evaluación previa del punto eléctrico.",
+
+                garantia:
+                    "1 año sobre la instalación.",
+
+                precio:
+                    "Desde S/ 60.00"
+
+            },
+
+
+            "mantenimiento-electrico": {
+
+                titulo: "Mantenimiento eléctrico",
+
+                categoria: "Electricidad",
+
+                descripcion:
+                    "Revisión preventiva de las instalaciones eléctricas del hogar para detectar posibles fallas y mantener un funcionamiento adecuado.",
+
+                condiciones: [
+                    "El tablero eléctrico debe encontrarse accesible.",
+                    "Las áreas de trabajo deben estar despejadas."
+                ],
+
+                noIncluye: [
+                    "Cambio completo de la instalación eléctrica.",
+                    "Materiales adicionales.",
+                    "Trabajos de construcción."
+                ],
+
+                restricciones:
+                    "El servicio dependerá del estado de la instalación.",
+
+                garantia:
+                    "30 días sobre el mantenimiento realizado.",
+
+                precio:
+                    "Desde S/ 70.00"
+
+            },
+
+
+            // -------------------------------
+            // CARPINTERÍA
+            // -------------------------------
+
+            "instalacion-puertas": {
+
+                titulo: "Instalación de puertas",
+
+                categoria: "Carpintería",
+
+                descripcion:
+                    "Instalación, ajuste y colocación de puertas de madera para diferentes ambientes del hogar.",
+
+                condiciones: [
+                    "La puerta debe encontrarse disponible para la instalación.",
+                    "El espacio de instalación debe estar despejado."
+                ],
+
+                noIncluye: [
+                    "Fabricación de puertas.",
+                    "Modificaciones estructurales.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "El precio dependerá del tipo y tamaño de la puerta.",
+
+                garantia:
+                    "1 año sobre la instalación.",
+
+                precio:
+                    "Desde S/ 70.00"
+
+            },
+
+
+            "reparacion-cajones": {
+
+                titulo: "Reparación de cajones",
+
+                categoria: "Carpintería",
+
+                descripcion:
+                    "Reparación de cajones, bisagras, correderas y otros componentes de muebles de madera.",
+
+                condiciones: [
+                    "El mueble debe encontrarse disponible para evaluación.",
+                    "El área de trabajo debe estar despejada."
+                ],
+
+                noIncluye: [
+                    "Fabricación de muebles nuevos.",
+                    "Cambio completo del mueble.",
+                    "Materiales especiales."
+                ],
+
+                restricciones:
+                    "El precio dependerá del daño y de las piezas necesarias.",
+
+                garantia:
+                    "6 meses sobre la reparación.",
+
+                precio:
+                    "Desde S/ 40.00"
+
+            },
+
+
+            // -------------------------------
+            // PINTURA
+            // -------------------------------
+
+            "pintura-habitaciones": {
+
+                titulo: "Pintura de habitaciones",
+
+                categoria: "Pintura",
+
+                descripcion:
+                    "Servicio de pintura para renovar habitaciones y mejorar la apariencia de los espacios interiores del hogar.",
+
+                condiciones: [
+                    "La habitación debe encontrarse despejada.",
+                    "Las paredes deben estar preparadas para pintar."
+                ],
+
+                noIncluye: [
+                    "Reparaciones estructurales.",
+                    "Tratamiento especializado de humedad.",
+                    "Movimiento de muebles pesados."
+                ],
+
+                restricciones:
+                    "El tiempo de trabajo dependerá del tamaño y estado de la habitación.",
+
+                garantia:
+                    "1 año.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            },
+
+
+            "acabados-decorativos": {
+
+                titulo: "Acabados decorativos",
+
+                categoria: "Pintura",
+
+                descripcion:
+                    "Aplicación de acabados y diseños decorativos para mejorar la apariencia de paredes y diferentes espacios del hogar.",
+
+                condiciones: [
+                    "La superficie debe estar limpia y preparada.",
+                    "El diseño debe ser definido previamente con el cliente."
+                ],
+
+                noIncluye: [
+                    "Reparaciones estructurales.",
+                    "Tratamiento de humedad.",
+                    "Materiales especiales no contemplados."
+                ],
+
+                restricciones:
+                    "El precio dependerá del tipo de acabado y tamaño de la superficie.",
+
+                garantia:
+                    "6 meses.",
+
+                precio:
+                    "Desde S/ 60.00"
+
+            },
+
+
+            // -------------------------------
+            // LIMPIEZA
+            // -------------------------------
+
+            "limpieza-viviendas": {
+
+                titulo: "Limpieza de viviendas",
+
+                categoria: "Limpieza",
+
+                descripcion:
+                    "Servicio de limpieza general para casas y departamentos, incluyendo diferentes ambientes del hogar.",
+
+                condiciones: [
+                    "Los ambientes deben encontrarse disponibles.",
+                    "Los objetos de valor deben ser retirados o protegidos."
+                ],
+
+                noIncluye: [
+                    "Reparaciones.",
+                    "Eliminación de residuos peligrosos.",
+                    "Limpieza especializada de equipos."
+                ],
+
+                restricciones:
+                    "El tiempo dependerá del tamaño y estado de la vivienda.",
+
+                garantia:
+                    "Garantía de satisfacción.",
+
+                precio:
+                    "Desde S/ 35.00"
+
+            },
+
+
+            "desinfeccion": {
+
+                titulo: "Desinfección de ambientes",
+
+                categoria: "Limpieza",
+
+                descripcion:
+                    "Servicio de limpieza y desinfección de diferentes ambientes del hogar para mantener espacios más limpios y adecuados.",
+
+                condiciones: [
+                    "El área debe encontrarse disponible.",
+                    "Las personas y mascotas deben mantenerse alejadas durante el servicio."
+                ],
+
+                noIncluye: [
+                    "Limpieza de residuos peligrosos.",
+                    "Reparaciones.",
+                    "Tratamientos especializados."
+                ],
+
+                restricciones:
+                    "El tiempo dependerá del tamaño del ambiente.",
+
+                garantia:
+                    "Garantía de satisfacción.",
+
+                precio:
+                    "Desde S/ 40.00"
+
+            },
+
+
+            // -------------------------------
+            // REPARACIONES
+            // -------------------------------
+
+            "mantenimiento-hogar": {
+
+                titulo: "Mantenimiento del hogar",
+
+                categoria: "Reparaciones",
+
+                descripcion:
+                    "Servicio de mantenimiento preventivo y correctivo para diferentes espacios y elementos del hogar.",
+
+                condiciones: [
+                    "El área debe encontrarse accesible.",
+                    "El trabajador realizará una evaluación previa."
+                ],
+
+                noIncluye: [
+                    "Construcciones nuevas.",
+                    "Modificaciones estructurales importantes.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "El servicio dependerá de la evaluación realizada.",
+
+                garantia:
+                    "30 días sobre el mantenimiento realizado.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            },
+
+
+            "reparaciones-diversas": {
+
+                titulo: "Reparaciones diversas",
+
+                categoria: "Reparaciones",
+
+                descripcion:
+                    "Servicio para solucionar diferentes necesidades de reparación y mantenimiento que puedan presentarse en el hogar.",
+
+                condiciones: [
+                    "El área debe encontrarse accesible.",
+                    "Se realizará una evaluación previa del problema."
+                ],
+
+                noIncluye: [
+                    "Construcciones completamente nuevas.",
+                    "Modificaciones estructurales importantes.",
+                    "Materiales adicionales."
+                ],
+
+                restricciones:
+                    "El precio dependerá del tipo y dificultad de la reparación.",
+
+                garantia:
+                    "6 meses sobre el trabajo realizado.",
+
+                precio:
+                    "Desde S/ 50.00"
+
+            }
+
+        };
+
+
+
+
+        // ========================================
+        // MOSTRAR INFORMACIÓN
+        // ========================================
+
+        const contenedor =
+            document.getElementById("detalleServicio");
+
+
+        const servicio =
+            detalles[servicioSeleccionado];
+
+
+        if (servicio) {
+
+            document.title =
+                "ChambaCerca | " + servicio.titulo;
+
+
+            contenedor.innerHTML = `
+
+        <div class="col-12 col-lg-9">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4 p-md-5">
+
+
+                    <span class="badge text-bg-info mb-3">
+
+                        ${servicio.categoria}
+
+                    </span>
+
+
+                    <h1 class="section-title mb-3">
+
+                        ${servicio.titulo}
+
+                    </h1>
+
+
+                    <p class="text-muted mb-4">
+
+                        ${servicio.descripcion}
+
+                    </p>
+
+
+                    <div class="mb-4">
+
+                        <h2 class="h4">
+
+                            <i class="fas fa-clipboard-check text-primary"></i>
+
+                            Condiciones previas al servicio
+
+                        </h2>
+
+                        <ul>
+
+                            ${servicio.condiciones.map(item =>
+                `<li>${item}</li>`
+            ).join("")}
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <h2 class="h4">
+
+                            <i class="fas fa-ban text-primary"></i>
+
+                            Servicio no incluye
+
+                        </h2>
+
+                        <ul>
+
+                            ${servicio.noIncluye.map(item =>
+                `<li>${item}</li>`
+            ).join("")}
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <h2 class="h4">
+
+                            <i class="fas fa-circle-exclamation text-primary"></i>
+
+                            Restricciones
+
+                        </h2>
+
+                        <p>
+
+                            ${servicio.restricciones}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <h2 class="h4">
+
+                            <i class="fas fa-shield-halved text-primary"></i>
+
+                            Garantía
+
+                        </h2>
+
+                        <p>
+
+                            ${servicio.garantia}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="alert alert-primary">
+
+                        <strong>
+
+                            Precio referencial:
+
+                        </strong>
+
+                        ${servicio.precio}
+
+                    </div>
+
+
+                    <hr>
+
+
+                    <h2 class="h4 mb-3">
+
+                        ¿Cómo contrato este servicio?
+
+                    </h2>
+
+
+                    <p>
+
+                        Selecciona este servicio y posteriormente podrás
+                        revisar los trabajadores disponibles en tu zona
+                        para elegir la propuesta que mejor se adapte
+                        a tus necesidades.
+
+                    </p>
+
+
+                    <div class="d-flex gap-2 flex-wrap">
+
+                        <a
+                            href="index.html#servicios"
+                            class="btn btn-outline-secondary"
+                        >
+                            <i class="fas fa-arrow-left"></i>
+                            Ver otros servicios
+                        </a>
+
+
+                        <a
+                            href="index.html#solicitud"
+                            class="btn btn-primary"
+                        >
+                            <i class="fas fa-handshake"></i>
+                            Solicitar servicio
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+        } else {
+
+            contenedor.innerHTML = `
+
+        <div class="col-12">
+
+            <div class="alert alert-danger text-center">
+
+                <i class="fas fa-exclamation-triangle"></i>
+
+                No se encontró el servicio solicitado.
+
+            </div>
+
+
+            <div class="text-center">
+
+                <a
+                    href="index.html#servicios"
+                    class="btn btn-primary"
+                >
+                    Volver a servicios
+                </a>
+
+            </div>
+
+        </div>
+
+    `;
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

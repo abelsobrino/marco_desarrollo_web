@@ -1,0 +1,381 @@
+<!doctype html>
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>ChambaCerca | Trabajo y servicios locales</title>
+    <link href="css/plataforma.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="index.html">Chamba<span>Cerca</span></a>
+      <nav>
+        <button class="private" data-view="eleccion" hidden="">
+          Cambiar de modo</button
+        ><button class="private" data-view="panel" hidden="">
+          Mi actividad</button
+        ><button class="private" data-view="perfil" hidden="">Mi perfil</button
+        ><button class="primary" data-view="acceso" id="entrar">
+          Iniciar sesión</button
+        ><button hidden="" id="salir">Salir</button
+        ><button
+          aria-label="Mensajes"
+          class="message-button private"
+          data-view="bandeja"
+          hidden=""
+          id="btnMensajes"
+          title="Mensajes"
+        >
+          <svg
+            aria-hidden="true"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewbox="0 0 24 24"
+            width="24"
+          >
+            <path
+              d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-3 2 2-6.5A8.5 8.5 0 1 1 21 11.5Z"
+            ></path>
+            <path d="M7 9h9M7 13h6"></path></svg
+          ><span class="unread-badge" hidden="" id="badgeMensajes"></span>
+        </button>
+      </nav>
+    </header>
+    <main>
+      <div aria-live="polite" hidden="" id="notice" role="status"></div>
+      <section class="view" id="explorar">
+        <div class="hero">
+          <div>
+            <p class="eyebrow" id="modoEtiqueta">
+              SERVICIOS Y TRABAJO EN TU DISTRITO
+            </p>
+            <h1 id="explorarTitulo">
+              ¿Necesitas ayuda<br />o buscas una chamba?
+            </h1>
+            <p id="explorarDescripcion">
+              Conectamos a quienes necesitan un trabajo con las personas que
+              saben hacerlo.
+            </p>
+            <div class="tabs">
+              <button class="primary" data-mode="contratar">
+                Quiero contratar</button
+              ><button data-mode="trabajar">Quiero trabajar</button>
+            </div>
+            <div hidden="" id="accionesModo">
+              <button class="primary" data-view="publicar" id="publicarAccion">
+                Publicar un trabajo</button
+              ><button data-view="perfil" hidden="" id="perfilAccion">
+                Completar mi perfil de trabajador
+              </button>
+            </div>
+          </div>
+          <img alt="Servicio de carpintería" src="imagenes/carpinteria.png" />
+        </div>
+        <div class="tabs">
+          <button class="primary" id="verTrabajadores">
+            Trabajadores disponibles</button
+          ><button id="verTrabajos">Trabajos publicados</button>
+        </div>
+        <form class="filters" id="filtros">
+          <label
+            >Buscar<input
+              name="buscar"
+              placeholder="Nombre, oficio o título"
+              type="search" /></label
+          ><label>Oficio<select name="oficio"></select></label
+          ><label>Distrito<select name="distrito"></select></label
+          ><button class="primary">Buscar</button
+          ><button id="gps" type="button">Usar mi ubicación</button>
+        </form>
+        <p class="muted">
+          Cobertura inicial: 10 distritos de Lima. Puedes elegir el distrito
+          manualmente.
+        </p>
+        <div class="grid" id="resultados"></div>
+      </section>
+      <section class="view auth-view" hidden="" id="acceso">
+        <article class="auth-card">
+          <p class="eyebrow">BIENVENIDO A CHAMBACERCA</p>
+          <h1>Iniciar sesión</h1>
+          <p>Entra a tu cuenta para contratar o trabajar.</p>
+          <form id="login">
+            <label
+              >Correo<input
+                autocomplete="email"
+                name="email"
+                placeholder="nombre@dominio.com"
+                required=""
+                type="email" /></label
+            ><label
+              >Contraseña<input
+                autocomplete="current-password"
+                name="password"
+                required=""
+                type="password" /></label
+            ><button class="primary">Ingresar</button>
+          </form>
+          <p class="auth-link">
+            ¿No tienes una cuenta?
+            <button class="text-button" data-view="registroVista">
+              Regístrate
+            </button>
+          </p>
+          <button class="text-button" id="recuperar">
+            Olvidé mi contraseña
+          </button>
+          <p class="muted">
+            La recuperación necesita un correo al que tengas acceso.
+          </p>
+        </article>
+      </section>
+      <section class="view auth-view" hidden="" id="registroVista">
+        <article class="auth-card">
+          <h1>Crea tu cuenta</h1>
+          <p>Una sola cuenta. Tú eliges si quieres contratar o trabajar.</p>
+          <form id="registro">
+            <label
+              >Nombre<input
+                autocomplete="name"
+                maxlength="100"
+                minlength="2"
+                name="nombre"
+                required="" /></label
+            ><label
+              >Correo<input
+                autocomplete="email"
+                name="email"
+                placeholder="alumno01@example.com"
+                required=""
+                type="email" /></label
+            ><label
+              >Contraseña<input
+                autocomplete="new-password"
+                minlength="8"
+                name="password"
+                required=""
+                type="password" /></label
+            ><small>Mínimo 8 caracteres.</small
+            ><button class="primary">Registrarme</button>
+          </form>
+          <p class="auth-link">
+            ¿Ya tienes una cuenta?
+            <button class="text-button" data-view="acceso">
+              Inicia sesión
+            </button>
+          </p>
+          <p id="registroEstado" role="status"></p>
+        </article>
+      </section>
+      <section class="view" hidden="" id="eleccion">
+        <div class="welcome-heading">
+          <p class="eyebrow">TU CUENTA, DOS POSIBILIDADES</p>
+          <h1>¿Qué quieres hacer hoy?</h1>
+          <p>Puedes cambiar de opción cuando quieras, sin crear otra cuenta.</p>
+        </div>
+        <div class="grid two mode-cards">
+          <article>
+            <span aria-hidden="true" class="mode-icon">⌂</span>
+            <h2>Quiero contratar</h2>
+            <p>Necesito que alguien realice un trabajo.</p>
+            <ul>
+              <li>Encuentra trabajadores por oficio y distrito.</li>
+              <li>Publica qué necesitas y cuánto ofreces pagar.</li>
+              <li>Elige a una persona y coordina por mensajes.</li>
+            </ul>
+            <button class="primary" data-mode="contratar">
+              Buscar un trabajador
+            </button>
+          </article>
+          <article>
+            <span aria-hidden="true" class="mode-icon">⚒</span>
+            <h2>Quiero trabajar</h2>
+            <p>Ofrezco mis servicios y busco oportunidades.</p>
+            <ul>
+              <li>Completa tu perfil, oficios y experiencia.</li>
+              <li>Encuentra trabajos cerca de ti.</li>
+              <li>Envía tu propuesta y conversa con el cliente.</li>
+            </ul>
+            <button class="primary" data-mode="trabajar">
+              Buscar oportunidades
+            </button>
+          </article>
+        </div>
+      </section>
+      <section class="view" hidden="" id="recuperacion">
+        <h1>Nueva contraseña</h1>
+        <form id="nuevaPassword">
+          <label
+            >Contraseña<input
+              autocomplete="new-password"
+              minlength="8"
+              name="password"
+              required=""
+              type="password" /></label
+          ><button class="primary">Guardar contraseña</button>
+        </form>
+      </section>
+      <section class="view" hidden="" id="perfil">
+        <h1>Mi perfil</h1>
+        <p>
+          Presenta quién eres. Si quieres trabajar, activa tu perfil y agrega
+          tus oficios y experiencia.
+        </p>
+        <form class="panel" id="perfilForm">
+          <label
+            >Nombre público<input
+              maxlength="100"
+              minlength="2"
+              name="nombre"
+              required=""
+              type="text" /></label
+          ><label
+            >Distrito<select name="distrito_id" required=""></select></label
+          ><label
+            >Sobre mí<textarea
+              maxlength="2000"
+              name="presentacion"
+              placeholder="Cuéntanos sobre tu trabajo"
+            ></textarea></label
+          ><label class="check"
+            ><input name="ofrece_servicios" type="checkbox" /> Quiero aparecer
+            como trabajador</label
+          ><label
+            >Foto pública (JPG, PNG o WebP; máximo 2 MB)<input
+              accept="image/jpeg,image/png,image/webp"
+              name="foto"
+              type="file" /></label
+          ><button class="primary">Guardar perfil</button>
+        </form>
+        <article>
+          <h2>Mis oficios y experiencia</h2>
+          <form class="filters" id="oficioForm">
+            <label>Oficio<select name="oficio_id" required=""></select></label
+            ><label
+              >Años de experiencia<input
+                max="70"
+                min="0"
+                name="experiencia"
+                required=""
+                type="number"
+                value="0" /></label
+            ><button class="primary">Agregar / actualizar</button>
+          </form>
+          <div id="misOficios"></div>
+        </article>
+      </section>
+      <section class="view" hidden="" id="publicar">
+        <h1>Publica el trabajo que necesitas</h1>
+        <p>
+          Eres el cliente: describe lo que necesitas, elige la fecha y ofrece un
+          pago. Los trabajadores podrán enviarte sus propuestas.
+        </p>
+        <form class="panel" id="publicacionForm">
+          <label
+            >Título<input
+              maxlength="120"
+              minlength="5"
+              name="titulo"
+              placeholder="Necesito reparar una fuga en la cocina"
+              required=""
+              type="text" /></label
+          ><label
+            >Describe el trabajo<textarea
+              maxlength="4000"
+              minlength="20"
+              name="descripcion"
+              placeholder="Tareas, materiales, horario y condiciones. Comparte la dirección exacta solo por chat."
+              required=""
+            ></textarea></label
+          ><label>Oficio<select name="oficio_id" required=""></select></label
+          ><label
+            >Distrito<select name="distrito_id" required=""></select></label
+          ><label
+            >Fecha requerida<input
+              name="fecha"
+              required=""
+              type="date" /></label
+          ><label
+            >Pago ofrecido (S/)<input
+              max="99999999.99"
+              min="0.01"
+              name="pago"
+              required=""
+              step="0.01"
+              type="number" /></label
+          ><label
+            >Modalidad de pago<select name="modalidad_pago">
+              <option>Por trabajo</option>
+              <option>Por día</option>
+              <option>Por hora</option>
+            </select></label
+          >
+          <p class="muted">
+            El monto es una oferta. La plataforma no procesa pagos.
+          </p>
+          <button class="primary">Publicar trabajo</button>
+        </form>
+      </section>
+      <section class="view" hidden="" id="panel">
+        <h1>Mi actividad</h1>
+        <button class="primary" data-view="publicar">Nueva publicación</button>
+        <h2>Como cliente · Trabajos que publiqué</h2>
+        <div class="grid" id="misPublicaciones"></div>
+        <h2>Como trabajador · Mis propuestas</h2>
+        <div class="grid" id="misPostulaciones"></div>
+      </section>
+      <section class="view" hidden="" id="detalle">
+        <button data-view="panel">Volver a mis trabajos</button>
+        <div id="detalleContenido"></div>
+      </section>
+      <section class="view" hidden="" id="bandeja">
+        <div class="inbox-heading">
+          <div>
+            <p class="eyebrow">COORDINA CADA TRABAJO</p>
+            <h1>Mis mensajes</h1>
+            <p>Elige una persona para ver la conversación.</p>
+          </div>
+          <button id="actualizarBandeja">Actualizar</button>
+        </div>
+        <p id="estadoBandeja" role="status"></p>
+        <div class="conversation-list" id="listaConversaciones"></div>
+      </section>
+      <section class="view" hidden="" id="chat">
+        <button data-view="bandeja">← Todas las conversaciones</button>
+        <h1 id="chatNombre">Conversación</h1>
+        <p id="chatTrabajo"></p>
+        <button hidden="" id="mensajesAnteriores">
+          Ver mensajes anteriores
+        </button>
+        <div aria-live="polite" id="mensajes"></div>
+        <form class="filters" id="mensajeForm">
+          <label
+            >Mensaje<input
+              autocomplete="off"
+              maxlength="2000"
+              name="contenido"
+              required=""
+              type="text" /></label
+          ><button class="primary">Enviar</button>
+        </form>
+      </section>
+    </main>
+    <footer>ChambaCerca · Servicios locales, oportunidades reales.</footer>
+    <dialog id="formDialog">
+      <form id="accionForm">
+        <h2 id="accionTitulo"></h2>
+        <div id="accionCampos"></div>
+        <div class="tabs">
+          <button class="primary">Confirmar</button
+          ><button id="cerrarDialog" type="button">Cancelar</button>
+        </div>
+        <p id="dialogError" role="alert"></p>
+      </form>
+    </dialog>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/plataforma.js"></script>
+  </body>
+</html>
