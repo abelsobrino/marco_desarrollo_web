@@ -1,0 +1,19 @@
+<section class="view" hidden="" id="publicar">
+<h1>Publica el trabajo que necesitas</h1>
+<p>
+        Eres el cliente: describe lo que necesitas, elige la fecha y ofrece un
+        pago. Los trabajadores podrán enviarte sus propuestas.
+      </p>
+<form class="panel" id="publicacionForm">
+<label>Título<input maxlength="120" minlength="5" name="titulo" placeholder="Necesito reparar una fuga en la cocina" required="" type="text"/></label><label>Describe el
+          trabajo<textarea maxlength="4000" minlength="20" name="descripcion" placeholder="Tareas, materiales, horario y condiciones. Comparte la dirección exacta solo por chat." required=""></textarea></label><label>Oficio<select name="oficio_id" required=""></select></label><label>Distrito<select name="distrito_id" required=""></select></label><label>Fecha requerida<input name="fecha" required="" type="date"/></label><label>Pago ofrecido (S/)<input max="99999999.99" min="0.01" name="pago" required="" step="0.01" type="number"/></label><label>Modalidad de pago<select name="modalidad_pago">
+<option>Por trabajo</option>
+<option>Por día</option>
+<option>Por hora</option>
+</select></label>
+<p class="muted">
+          El monto es una oferta. La plataforma no procesa pagos.
+        </p>
+<button class="primary">Publicar trabajo</button>
+</form>
+</section>

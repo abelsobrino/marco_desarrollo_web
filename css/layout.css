@@ -1,0 +1,89 @@
+header {
+  background: white;
+  border-bottom: 1px solid #dce5ee;
+  padding: 20px max(5vw, 16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+}
+
+nav,
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.brand {
+  font-size: 25px;
+  font-weight: 800;
+  color: #0f2347;
+  text-decoration: none;
+}
+
+.brand span {
+  color: #1686dc;
+}
+
+main {
+  max-width: 1180px;
+  margin: auto;
+  padding: 24px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 35px;
+  align-items: center;
+  background: #eaf4ff;
+  padding: 44px;
+  border-radius: 24px;
+  margin-bottom: 28px;
+}
+
+.hero img {
+  width: 100%;
+  max-height: 310px;
+  object-fit: cover;
+  border-radius: 22px;
+}
+
+.hero p {
+  line-height: 1.7;
+}
+
+.tabs {
+  margin: 20px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.two {
+  grid-template-columns: 1fr 1fr;
+}
+
+article,
+.panel {
+  padding: 25px;
+  background: white;
+  border: 1px solid #e0e7ef;
+  border-radius: 16px;
+  margin: 16px 0;
+}
+
+.panel {
+  max-width: 720px;
+}
+
+footer {
+  padding: 50px;
+  text-align: center;
+  color: #596b80;
+}

@@ -1,0 +1,21 @@
+<section class="view" hidden="" id="perfil">
+<h1>Mi perfil</h1>
+<p>
+        Presenta quién eres. Si quieres trabajar, activa tu perfil y agrega
+        tus oficios y experiencia.
+      </p>
+<form class="panel" id="perfilForm">
+<label>Nombre público<input maxlength="100" minlength="2" name="nombre" required="" type="text"/></label><label>Distrito<select name="distrito_id" required=""></select></label><label>Sobre
+          mí<textarea maxlength="2000" name="presentacion" placeholder="Cuéntanos sobre tu trabajo"></textarea></label><label class="check"><input name="ofrece_servicios" type="checkbox"/> Quiero aparecer
+          como trabajador</label><label>Foto pública (JPG, PNG o WebP; máximo 2 MB)<input accept="image/jpeg,image/png,image/webp" name="foto" type="file"/></label><button class="primary">Guardar
+          perfil</button>
+</form>
+<article>
+<h2>Mis oficios y experiencia</h2>
+<form class="filters" id="oficioForm">
+<label>Oficio<select name="oficio_id" required=""></select></label><label>Años de experiencia<input max="70" min="0" name="experiencia" required="" type="number" value="0"/></label><button class="primary">Agregar /
+            actualizar</button>
+</form>
+<div id="misOficios"></div>
+</article>
+</section>

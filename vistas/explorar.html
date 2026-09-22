@@ -1,0 +1,52 @@
+<section class="view" id="explorar">
+<div class="hero">
+<div>
+<p class="eyebrow" id="modoEtiqueta">
+            SERVICIOS Y TRABAJO EN TU DISTRITO
+          </p>
+<h1 id="explorarTitulo">
+            ¿Necesitas ayuda<br/>o buscas una chamba?
+          </h1>
+<p id="explorarDescripcion">
+            Conectamos a quienes necesitan un trabajo con las personas que
+            saben hacerlo.
+          </p>
+<div class="tabs">
+<button class="primary" data-mode="contratar">
+              Quiero contratar</button><button data-mode="trabajar">Quiero trabajar</button>
+</div>
+<div hidden="" id="accionesModo">
+<button class="primary" data-view="publicar" id="publicarAccion">
+              Publicar un trabajo</button><button data-view="perfil" hidden="" id="perfilAccion">
+              Completar mi perfil de trabajador
+            </button>
+</div>
+</div>
+<img alt="trabajadores" src="img/imagen1.png"/>
+</div>
+<div class="tabs">
+<button class="primary" id="verTrabajadores">
+          Trabajadores disponibles</button><button id="verTrabajos">Trabajos publicados</button>
+</div>
+<form class="filters" id="filtros">
+<label>
+          Oficio
+          <select name="oficio"></select>
+</label>
+<label>
+          Distrito
+          <select name="distrito"></select>
+</label>
+<button class="primary" type="submit">
+          Buscar
+        </button>
+<button id="gps" type="button">
+          Usar mi ubicación
+        </button>
+</form>
+<p class="muted">
+        Cobertura inicial: 10 distritos de Lima. Puedes elegir el distrito
+        manualmente.
+      </p>
+<div class="grid" id="resultados"></div>
+</section>

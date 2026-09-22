@@ -1,0 +1,33 @@
+<section class="view auth-view" hidden="" id="acceso">
+<article class="auth-card">
+<p class="eyebrow">BIENVENIDO A CHAMBACERCA</p>
+<h1>Iniciar sesión</h1>
+<p>Entra a tu cuenta para contratar o trabajar.</p>
+<form id="login">
+<label>Correo<input autocomplete="email" name="email" placeholder="nombre@dominio.com" required="" type="email"/></label>
+<label>
+            Contraseña
+
+            <div class="password-field">
+<input autocomplete="current-password" id="loginPassword" name="password" required="" type="password"/>
+<button aria-label="Mostrar contraseña" class="password-toggle" id="togglePassword" type="button">
+                👁️‍🗨️
+              </button>
+</div>
+</label>
+<button class="primary">Ingresar</button>
+</form>
+<p class="auth-link">
+          ¿No tienes una cuenta?
+          <button class="text-button" data-view="registroVista">
+            Regístrate
+          </button>
+</p>
+<button class="text-button" id="recuperar">
+          Olvidé mi contraseña
+        </button>
+<p class="muted">
+          La recuperación necesita un correo al que tengas acceso.
+        </p>
+</article>
+</section>

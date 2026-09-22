@@ -1,0 +1,82 @@
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 19px;
+  padding: 6px;
+}
+
+.auth-view {
+  max-width: 480px;
+  margin: 35px auto;
+}
+
+.auth-card {
+  padding: 36px;
+}
+
+.auth-card h1 {
+  font-size: 34px;
+}
+
+.auth-link {
+  text-align: center;
+  font-size: 14px;
+}
+
+.welcome-heading {
+  text-align: center;
+  max-width: 700px;
+  margin: 35px auto;
+}
+
+.mode-cards {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.mode-cards article {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mode-cards p {
+  color: #526982;
+}
+
+.mode-cards ul {
+  padding-left: 22px;
+  line-height: 1.9;
+  font-size: 15px;
+  margin-bottom: 30px;
+}
+
+.mode-cards button {
+  margin-top: auto;
+}
+
+.mode-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  background: #eaf4ff;
+  border-radius: 14px;
+  font-size: 30px;
+  color: #1686dc;
+}

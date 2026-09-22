@@ -1,0 +1,29 @@
+.app-loader {
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.view:not([hidden]) {
+  animation: vistaEntrada 180ms ease-out;
+}
+
+@keyframes vistaEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view:not([hidden]) {
+    animation: none;
+  }
+}
