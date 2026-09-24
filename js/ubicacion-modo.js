@@ -6,59 +6,92 @@ $("#gps").onclick = () =>
       throw new Error(
         "Tu navegador no permite geolocalización. Selecciona el distrito.",
       );
-    notice(
-      "Solicitando ubicación. Se enviarán las coordenadas a BigDataCloud para sugerir el distrito.",
-    );
-    const position = await new Promise((resolve, reject) =>
-      navigator.geolocation.getCurrentPosition(
-        resolve,
-        () =>
-          reject(
-            new Error(
-              "No se pudo obtener tu ubicación. Selecciona el distrito manualmente.",
-            ),
-          ),
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
-      ),
-    );
-    const url = new URL(
-      "https://api.bigdatacloud.net/data/reverse-geocode-client",
-    );
-    url.search = new URLSearchParams({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-      localityLanguage: "es",
-    });
-    const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
-    if (!response.ok)
+    if (!window.isSecureContext)
       throw new Error(
-        "No se pudo consultar la ubicación. Selecciona el distrito manualmente.",
+        "La geolocalización requiere HTTPS o localhost. Abre el sitio con un servidor seguro.",
       );
-    const data = await response.json();
-    const normalize = (s) =>
-      String(s || "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim()
-        .replace(/^distrito de /, "");
-    const candidates = [
-      data.locality,
-      ...(data.localityInfo?.administrative || []).map((x) => x.name),
-    ].map(normalize);
-    const match =
-      data.countryCode === "PE" &&
-      catalogs.distritos.find((d) => candidates.includes(normalize(d.nombre)));
-    if (!match)
+    notice("Solicitando ubicación...");
+    const position = await obtenerPosicion();
+    const precision = Math.round(position.coords.accuracy);
+    const cercano = distritoMasCercano(
+      position.coords.latitude,
+      position.coords.longitude,
+    );
+    if (!cercano)
       throw new Error(
-        "No se identificó un distrito de cobertura. Elígelo manualmente.",
+        "Los distritos no tienen coordenadas registradas todavía. Selecciona el distrito manualmente.",
       );
-    $("#filtros [name=distrito]").value = match.id;
+    $("#filtros [name=distrito]").value = cercano.distrito.id;
     notice(
-      `Distrito sugerido: ${match.nombre}. Verifica la selección antes de buscar.`,
+      `Distrito sugerido: ${cercano.distrito.nombre} ` +
+        `(a ${cercano.km.toFixed(1)} km de tu posición, precisión ±${precision} m). ` +
+        `Verifica la selección antes de buscar.`,
     );
     await search();
   }, $("#gps"));
+
+// Códigos de error de la Geolocation API:
+// 1 = PERMISSION_DENIED, 2 = POSITION_UNAVAILABLE, 3 = TIMEOUT
+const MENSAJES_ERROR_GPS = {
+  1: "Bloqueaste el permiso de ubicación. Actívalo desde el candado de la barra de direcciones y vuelve a intentar, o selecciona el distrito manualmente.",
+  2: "No se pudo determinar tu ubicación. Verifica que la ubicación esté activada en tu computadora o celular (en Windows: Configuración > Privacidad > Ubicación; en Mac: Ajustes > Privacidad y seguridad > Localización), o selecciona el distrito manualmente.",
+  3: "La búsqueda de ubicación tardó demasiado. Intenta de nuevo o selecciona el distrito manualmente.",
+};
+
+function pedirPosicion(opciones) {
+  return new Promise((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(
+      resolve,
+      (e) =>
+        reject(
+          new Error(
+            MENSAJES_ERROR_GPS[e.code] ||
+              "No se pudo obtener tu ubicación. Selecciona el distrito manualmente.",
+          ),
+        ),
+      opciones,
+    ),
+  );
+}
+
+// Primer intento: GPS de precisión (celulares). Si falla o no hay chip GPS
+// (la mayoría de laptops), reintenta con triangulación por red/WiFi, que
+// responde más rápido aunque con menos precisión.
+async function obtenerPosicion() {
+  try {
+    return await pedirPosicion({
+      enableHighAccuracy: true,
+      timeout: 8000,
+      maximumAge: 60000,
+    });
+  } catch (primerError) {
+    try {
+      return await pedirPosicion({
+        enableHighAccuracy: false,
+        timeout: 8000,
+        maximumAge: 300000,
+      });
+    } catch {
+      throw primerError;
+    }
+  }
+}
+
+// Compara la posición del usuario contra las coordenadas guardadas de cada
+// distrito (catalogs.distritos[].latitud/.longitud) y devuelve el más
+// cercano. Esto evita depender de que un servicio externo de geocodificación
+// reconozca el distrito exacto: en Lima, muchas veces solo identifica la
+// ciudad ("Lima") y no el distrito puntual.
+function distritoMasCercano(lat, lon) {
+  let mejor = null;
+  for (const d of catalogs.distritos) {
+    if (d.latitud == null || d.longitud == null) continue;
+    const km = distanciaKm(lat, lon, d.latitud, d.longitud);
+    if (!mejor || km < mejor.km) mejor = { distrito: d, km };
+  }
+  return mejor;
+}
+
 
 async function chooseMode(choice) {
   if (!user) {
