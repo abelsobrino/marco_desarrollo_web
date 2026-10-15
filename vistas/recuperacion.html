@@ -1,0 +1,11 @@
+<section class="view" hidden="" id="recuperacion">
+<h1>Nueva contraseña</h1>
+<form id="nuevaPassword">
+<label for="recuperarPassword">Contraseña</label>
+<div class="password-field"><input id="recuperarPassword" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" placeholder="Nueva contraseña" required><button type="button" class="password-toggle" data-password-toggle="recuperarPassword" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div>
+<div class="password-checklist" data-password-rules="recuperarPassword" aria-live="polite"><small>La contraseña debe cumplir:</small><small data-rule="length">○ Entre 8 y 72 caracteres</small><small data-rule="upper">○ Una letra mayúscula</small><small data-rule="lower">○ Una letra minúscula</small><small data-rule="number">○ Un número</small><small data-rule="symbol">○ Un símbolo</small></div>
+<label for="recuperarConfirmar">Confirmar contraseña</label>
+<div class="password-field"><input id="recuperarConfirmar" name="confirmar_password" type="password" autocomplete="new-password" minlength="8" maxlength="72" placeholder="Repite la nueva contraseña" required><button type="button" class="password-toggle" data-password-toggle="recuperarConfirmar" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div>
+<small class="password-match" data-password-match="recuperarConfirmar" role="status"></small><button class="primary"><i class="fa-solid fa-key" aria-hidden="true"></i> Guardar contraseña</button>
+</form>
+</section>

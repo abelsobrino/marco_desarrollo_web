@@ -1,0 +1,127 @@
+button {
+  border: 1px solid #c9d7e7;
+  border-radius: 9px;
+  padding: 11px 15px;
+  background: white;
+  color: #0f2347;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #1686dc;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.primary {
+  background: #1686dc;
+  color: white;
+  border-color: #1686dc;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  background: white;
+  border: 1px solid #bacbdc;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  color: #0f2347;
+}
+
+textarea {
+  min-height: 115px;
+  resize: vertical;
+}
+
+.check {
+  flex-direction: row;
+  align-items: center;
+}
+
+.check input {
+  width: auto;
+}
+
+form:not(.filters) {
+  display: grid;
+  gap: 18px;
+}
+
+#notice {
+  background: #eaf4ff;
+  border: 1px solid #82bcea;
+  border-radius: 10px;
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  z-index: 1000;
+  box-shadow: 0 10px 35px #0f234725;
+  pointer-events: none;
+  padding: 12px 20px;
+}
+
+#notice.error,
+#dialogError {
+  color: #a62727;
+}
+
+#notice.error {
+  background: #fff0f0;
+  border-color: #e5aaaa;
+}
+
+dialog {
+  border: 1px solid #ccd9e8;
+  border-radius: 18px;
+  padding: 28px;
+  width: min(560px, 92vw);
+}
+
+dialog::backdrop {
+  background: #0f234777;
+}
+
+.text-button {
+  border: none;
+  background: transparent;
+  color: #096cbb;
+  padding: 3px;
+  font-weight: 650;
+  text-decoration: underline;
+}
+
+.form-feedback,
+#registroEstado {
+  font-size: 14px;
+  color: #aa2727;
+}
+/* Mejoras de lectura y avisos */
+#terminosDialog{max-width:min(760px,94vw);border:0;border-radius:18px;padding:26px;max-height:85vh;overflow:auto;box-shadow:0 22px 80px #0004}
+#terminosDialog::backdrop{background:#14243599}
+.terms-content{line-height:1.65}.terms-content h2{font-size:1.5rem}
+.notification-item{border:1px solid #d6e1e9;border-radius:12px;padding:16px;margin:12px 0;background:#fff}
+.notification-item.pending{border-left:4px solid #216d9e;background:#f4f9ff}
+#registroNombre[readonly],#perfilForm [name=nombre][readonly]{background:#f1f4f7;cursor:not-allowed}
+.worker-distance{font-size:.92rem;color:#285d7b}
+
+button .fa-solid {font-size:.95em;vertical-align:baseline;margin-right:.32em;}
+button.password-toggle .fa-solid,button.message-button .fa-solid,button[aria-label="Semana anterior"] .fa-solid,button[aria-label="Semana siguiente"] .fa-solid {margin-right:0;}
+.message-button .fa-solid {font-size:20px;}

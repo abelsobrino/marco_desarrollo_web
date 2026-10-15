@@ -1,0 +1,14 @@
+<section class="view" hidden="" id="panel">
+<h1>Mi actividad</h1>
+<p id="resumenTrabajos" class="muted"></p>
+<button class="primary" data-view="publicar"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Nueva publicación</button>
+<h2>Como cliente · Trabajos que publiqué</h2>
+<div class="grid" id="misPublicaciones"></div>
+<h2>Como trabajador · Mis propuestas</h2>
+<div class="grid" id="misPostulaciones"></div>
+<section class="agenda-semanal panel" aria-label="Agenda semanal">
+<div class="agenda-cabecera"><div><h2>Mi agenda semanal</h2><p class="muted">Reservas confirmadas y propuestas pendientes. Elige un día.</p></div><div class="agenda-navegacion"><button type="button" id="semanaAnterior" aria-label="Semana anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><strong id="tituloSemana"></strong><button type="button" id="semanaSiguiente" aria-label="Semana siguiente"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button><button type="button" id="semanaActual"><i class="fa-solid fa-calendar-day" aria-hidden="true"></i> Hoy</button></div></div>
+<div class="agenda-acciones"><button type="button" class="primary" id="agregarTrabajoExterno"><i class="fa-solid fa-calendar-plus" aria-hidden="true"></i> + Agregar trabajo externo</button><span class="muted">Solo tú podrás ver sus detalles.</span></div>
+<div id="agendaDias" class="agenda-dias" role="group" aria-label="Días de la semana"></div><h3 id="agendaDiaTitulo">Trabajos del día</h3><div id="agendaTrabajos" aria-live="polite"></div>
+<p class="muted agenda-nota">Los horarios son referenciales hasta que ambas partes los confirmen. Las reservas confirmadas no pueden superponerse.</p></section>
+</section>

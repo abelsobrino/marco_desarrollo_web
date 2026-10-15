@@ -1,0 +1,21 @@
+<section class="view auth-view" hidden="" id="registroVista">
+<article class="auth-card">
+<h1>Crea tu cuenta</h1>
+<p>Una sola cuenta. Tú eliges si quieres contratar o trabajar.</p>
+<form id="registro">
+<label>DNI peruano<input name="dni" id="registroDni" inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" required placeholder="8 dígitos"></label><button type="button" id="validarDni" class="secondary"><i class="fa-solid fa-id-card" aria-hidden="true"></i> Consultar DNI</button><p id="estadoDni" role="status" class="muted">Consulta tu DNI para completar tus nombres.</p><label>Nombres y apellidos<input autocomplete="name" maxlength="100" name="nombre" id="registroNombre" required readonly></label><label>Fecha de nacimiento<input type="date" id="registroFechaNacimiento" name="fecha_nacimiento" required></label><small>La edad se calcula a partir de tu fecha declarada, no se verifica con RENIEC.</small><label>Correo<input autocomplete="email" name="email" placeholder="alumno01@example.com" required="" type="email"/></label><label for="registroPassword">Contraseña</label>
+<div class="password-field"><input id="registroPassword" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" placeholder="Crea una contraseña segura" required><button type="button" class="password-toggle" data-password-toggle="registroPassword" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div>
+<div class="password-checklist" data-password-rules="registroPassword" aria-live="polite"><small>La contraseña debe cumplir:</small><small data-rule="length">○ Entre 8 y 72 caracteres</small><small data-rule="upper">○ Una letra mayúscula</small><small data-rule="lower">○ Una letra minúscula</small><small data-rule="number">○ Un número</small><small data-rule="symbol">○ Un símbolo</small></div>
+<label for="confirmarPassword">Confirmar contraseña</label>
+<div class="password-field"><input id="confirmarPassword" name="confirmar_password" type="password" autocomplete="new-password" minlength="8" maxlength="72" placeholder="Repite la contraseña" required><button type="button" class="password-toggle" data-password-toggle="confirmarPassword" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div>
+<small class="password-match" data-password-match="confirmarPassword" role="status"></small><label class="check"><input type="checkbox" name="acepto" required> Acepto los <button type="button" id="verTerminos" class="text-button">términos, condiciones y garantía del servicio</button></label><button class="primary"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Registrarme</button>
+</form>
+<p class="auth-link">
+          ¿Ya tienes una cuenta?
+          <button class="text-button" data-view="acceso">
+            Inicia sesión
+          </button>
+</p>
+<p id="registroEstado" role="status"></p>
+</article>
+</section>

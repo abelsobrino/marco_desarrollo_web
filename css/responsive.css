@@ -1,0 +1,81 @@
+@media (max-width: 760px) {
+  header {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .hero,
+  .grid,
+  .two {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding: 24px;
+  }
+
+  .hero img {
+    max-height: 180px;
+  }
+
+  main {
+    padding: 16px;
+  }
+
+  .filters {
+    align-items: stretch;
+  }
+
+  .filters label {
+    min-width: 100%;
+  }
+
+  header .message-button {
+    position: absolute;
+    top: 17px;
+    right: 24px;
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
+
+  .auth-view {
+    margin: 8px auto;
+  }
+
+  .mode-cards article {
+    padding: 24px;
+  }
+
+  .inbox-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .conversation-row {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .person-initial {
+    width: 38px;
+    height: 38px;
+  }
+
+  .conversation-meta small {
+    font-size: 10px;
+  }
+
+  .conversation-text strong {
+    font-size: 16px;
+  }
+
+  #mensajes {
+    height: 380px;
+  }
+
+  #notice {
+    font-size: 14px;
+  }
+}
