@@ -95,6 +95,7 @@ onSubmit("#registro", async (f, form) => {
   $("#registroEstado").textContent = "Revisa tu correo y confirma la cuenta antes de ingresar.";
   notice("Consulta tu correo para confirmar el registro.");
 });
+$("#salirDesdePerfil").addEventListener("click", () => $("#salir").click());
 $("#salir").addEventListener("click", () =>
   run(async () => {
     requireDB();

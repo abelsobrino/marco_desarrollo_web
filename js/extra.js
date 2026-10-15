@@ -44,7 +44,7 @@ function appendDirectInbox(){
   if(!list) return;
   for (const r of directInboxRows) {
     const button = document.createElement("button"); button.className="conversation-row";
-    button.textContent = "✉ " + r.nombre + " · Conversación directa";
+    button.innerHTML = `<span class="person-initial" aria-hidden="true"><i class="fa-solid fa-user"></i></span><span class="conversation-text"><strong>${esc(r.nombre)}</strong><small>Conversación directa</small><span>Ver mensajes y reservas</span></span><span class="conversation-meta"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>`;
     button.onclick = () => run(()=>openConversation("direct:"+r.id),button);
     list.append(button);
   }

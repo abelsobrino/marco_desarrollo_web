@@ -30,11 +30,6 @@
     min-width: 100%;
   }
 
-  header .message-button {
-    position: absolute;
-    top: 17px;
-    right: 24px;
-  }
 
   .auth-card {
     padding: 24px;
@@ -79,3 +74,29 @@
     font-size: 14px;
   }
 }
+
+/* Prototipo V2: cabecera compacta y navegación inferior Bootstrap */
+.mobile-bottom-nav { display: none !important; }
+.mobile-unread { position: absolute; top: 6px; right: 14%; color: white; background: #d93943; border-radius: 14px; min-width: 18px; padding: 1px 4px; font-size: 10px; line-height: 16px; }
+@media (max-width: 991.98px) {
+  header { position: sticky; top: 0; z-index: 1020; display: flex; flex-direction: row; align-items: center; flex-wrap: nowrap; padding: 11px 16px; gap: 8px; min-height: 66px; }
+  header .brand { font-size: clamp(18px, 5vw, 25px); white-space: nowrap; }
+  header nav { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 8px; }
+  header nav > button:not(#btnNotificaciones):not(#entrar) { display: none !important; }
+  header #btnMensajes { display: none !important; }
+  header #btnNotificaciones { position: relative; inset: auto; width: 42px; height: 42px; padding: 8px; flex: 0 0 auto; }
+  header #entrar { white-space: nowrap; font-size: 12px; padding: 10px; }
+  #notice { top: 75px; }
+  .mobile-bottom-nav:not([hidden]) { display: flex !important; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030; min-height: 70px; padding: 5px max(4px, env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left)); border-top: 1px solid #dae4ef; }
+  .mobile-nav-item { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; flex: 1; min-width: 0; padding: 6px 1px; border: none; border-radius: 9px; font-size: 10px; line-height: 1.1; background: transparent; color: #526982; }
+  .mobile-nav-item .fa-solid { margin: 0; font-size: 20px; }
+  .mobile-nav-item.active { color: #096cbb; background: #eaf4ff; font-weight: 700; }
+  .mobile-nav-item:focus-visible { outline-offset: -2px; }
+  body.signed-in footer { padding-bottom: calc(95px + env(safe-area-inset-bottom)); }
+  body.signed-in main { padding-bottom: 28px; }
+  .agenda-semanal, .conversation-list { min-width: 0; }
+}
+@media (max-width: 420px) { .mobile-nav-item { font-size: 9.5px; } header { padding-inline: 12px; } }
+
+@media (min-width: 992px) { .perfil-logout { display: none; } }
+#filtros { scroll-margin-top: 95px; }

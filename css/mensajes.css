@@ -164,3 +164,8 @@
 #chatTrabajo {
   color: #526982;
 }
+
+.inbox-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 10px; }
+.inbox-tabs .btn { flex: 1 1 180px; white-space: normal; font-weight: 650; }
+.inbox-tabs .fa-solid { margin-right: 6px; }
+@media (max-width: 575px) { .inbox-tabs .btn { font-size: 12px; padding: 10px 7px; flex-basis: 120px; } }

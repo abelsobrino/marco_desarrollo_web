@@ -7,6 +7,7 @@ const vistas = [
   "eleccion",
   "recuperacion",
   "perfil",
+  "perfil-publico",
   "publicar",
   "actividad",
   "detalle",
@@ -25,6 +26,7 @@ const scriptsAplicacion = [
   "js/mensajes.js",
   "js/ubicacion-modo.js",
   "js/extra.js",
+  "js/perfil-publico.js",
   "js/app.js",
 ];
 

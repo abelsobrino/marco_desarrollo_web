@@ -27,6 +27,13 @@
 </button>
 </nav>
 </header>
+  <nav class="mobile-bottom-nav fixed-bottom bg-white shadow-sm d-flex justify-content-around align-items-stretch private" id="navegacionMovil" aria-label="Navegación principal móvil" hidden>
+    <button type="button" class="mobile-nav-item" data-view="explorar" aria-label="Inicio"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Inicio</span></button>
+    <button type="button" class="mobile-nav-item" data-view="explorar" data-scroll-target="filtros" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Buscar</span></button>
+    <button type="button" class="mobile-nav-item" data-view="panel" aria-label="Mi actividad"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>Actividad</span></button>
+    <button type="button" class="mobile-nav-item" data-view="bandeja" aria-label="Mensajes"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Mensajes</span><span id="badgeMensajesMovil" class="mobile-unread" hidden></span></button>
+    <button type="button" class="mobile-nav-item" data-view="perfil" aria-label="Mi perfil"><i class="fa-solid fa-user" aria-hidden="true"></i><span>Perfil</span></button>
+  </nav>
   <main>
     <div aria-live="polite" hidden id="notice" role="status"></div>
     <div id="vistasRoot">

@@ -3,9 +3,13 @@
 <div>
 <p class="eyebrow">COORDINA CADA TRABAJO</p>
 <h1>Mis mensajes</h1>
-<p>Elige una persona para ver la conversación.</p>
+<p>Elige el tipo de conversación y abre el chat correspondiente.</p>
 </div>
 <button id="actualizarBandeja"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Actualizar</button>
+</div>
+<div class="btn-group inbox-tabs" role="group" aria-label="Tipo de mensajes">
+  <button type="button" class="btn btn-primary" data-inbox-tab="directas" aria-pressed="true"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> Conversaciones directas</button>
+  <button type="button" class="btn btn-outline-primary" data-inbox-tab="postulaciones" aria-pressed="false"><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Chats por publicaciones</button>
 </div>
 <p id="estadoBandeja" role="status"></p>
 <div class="conversation-list" id="listaConversaciones"></div>

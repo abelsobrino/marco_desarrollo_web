@@ -24,7 +24,10 @@ onSubmit("#filtros", async () => {
 });
 function workerCard(p) {
   const skills = p.perfil_oficios || [];
-  const ratings = [...(p.calificaciones || []), ...(p.calificaciones_directas || [])];
+  const ratings = [
+    ...(p.calificaciones || []),
+    ...(p.calificaciones_directas || []),
+  ];
 
   const avg = ratings.length
     ? (ratings.reduce((s, r) => s + r.puntuacion, 0) / ratings.length).toFixed(
@@ -84,9 +87,29 @@ function workerCard(p) {
       </p>
 
       <p class="muted">${Number(p.trabajos_realizados || 0)} trabajos completados y confirmados</p>
-      ${user && user.id !== p.id ? `<button class="primary" data-direct="${esc(p.id)}">✉ Enviar mensaje</button>` : "<small>Inicia sesión para conversar.</small>"}
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" data-worker-profile="${esc(p.id)}"><i class="fa-solid fa-user" aria-hidden="true"></i> Perfil y reseñas</button>
+        ${user && user.id !== p.id ? `<button class="primary" data-direct="${esc(p.id)}"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> Enviar mensaje</button>` : user?.id === p.id ? "" : "<small>Inicia sesión para conversar.</small>"}
+      </div>
     </article>
   `;
+}
+function etiquetaEstado(value) {
+  const labels = {
+    abierta: "Abierto",
+    asignada: "Asignado",
+    finalizada: "Finalizado",
+    cancelada: "Cancelado",
+    pendiente: "Pendiente",
+    confirmada: "Confirmado",
+    programado: "Programado",
+    cancelado: "Cancelado",
+  };
+  const text = String(value || "").toLowerCase();
+  return (
+    labels[text] ||
+    (text ? text.charAt(0).toUpperCase() + text.slice(1) : "Sin estado")
+  );
 }
 function jobCard(p, extra = "") {
   const km = distanciaAlDestino(p.distrito_id);
@@ -94,7 +117,7 @@ function jobCard(p, extra = "") {
     km !== null
       ? `<p class="muted">📍 A ${km.toFixed(1)} km de ti (aprox.)</p>`
       : "";
-  return `<article><span class="tag">${esc(p.estado)}</span><h2>${esc(p.titulo)}</h2><p>${esc(p.descripcion)}</p><p class="muted">${esc(nameOf("oficios", p.oficio_id))} · ${esc(nameOf("distritos", p.distrito_id))}<br>Fecha: ${esc(p.fecha)}</p>${distanciaTxt}<p><strong>${money(p.pago)}</strong> · ${esc(p.modalidad_pago)}</p>${extra}</article>`;
+  return `<article><span class="tag">${esc(etiquetaEstado(p.estado))}</span><h2>${esc(p.titulo)}</h2><p>${esc(p.descripcion)}</p><p class="muted">${esc(nameOf("oficios", p.oficio_id))} · ${esc(nameOf("distritos", p.distrito_id))}<br>Fecha: ${esc(p.fecha)}</p>${distanciaTxt}<p><strong>${money(p.pago)}</strong> · ${esc(p.modalidad_pago)}</p>${extra}</article>`;
 }
 async function search(applyFilters = false) {
   const generation = ++searchGeneration;
@@ -107,7 +130,6 @@ async function search(applyFilters = false) {
   $("#resultados").textContent = "Buscando…";
 
   let rows = [];
-
 
   if (mode === "trabajadores") {
     let query = db
@@ -136,16 +158,32 @@ async function search(applyFilters = false) {
     }
 
     if (rows.length) {
-      const ids = rows.map(p => p.id);
+      const ids = rows.map((p) => p.id);
       const [completed, direct, directReviews] = await Promise.all([
-        db.from("publicaciones").select("trabajador_id").in("trabajador_id", ids).eq("estado", "finalizada"),
-        db.from("servicios_directos").select("trabajador_id").in("trabajador_id", ids).eq("cliente_finalizo", true).eq("trabajador_finalizo", true),
-        db.from("calificaciones_directas").select("trabajador_id,puntuacion").in("trabajador_id", ids)
+        db
+          .from("publicaciones")
+          .select("trabajador_id")
+          .in("trabajador_id", ids)
+          .eq("estado", "finalizada"),
+        db
+          .from("servicios_directos")
+          .select("trabajador_id")
+          .in("trabajador_id", ids)
+          .eq("cliente_finalizo", true)
+          .eq("trabajador_finalizo", true),
+        db
+          .from("calificaciones_directas")
+          .select("trabajador_id,puntuacion")
+          .in("trabajador_id", ids),
       ]);
       if (!completed.error && !direct.error && !directReviews.error) {
         for (const p of rows) {
-          p.trabajos_realizados = completed.data.filter(j => j.trabajador_id === p.id).length + direct.data.filter(j => j.trabajador_id === p.id).length;
-          p.calificaciones_directas = directReviews.data.filter(j => j.trabajador_id === p.id);
+          p.trabajos_realizados =
+            completed.data.filter((j) => j.trabajador_id === p.id).length +
+            direct.data.filter((j) => j.trabajador_id === p.id).length;
+          p.calificaciones_directas = directReviews.data.filter(
+            (j) => j.trabajador_id === p.id,
+          );
         }
       }
     }
@@ -157,9 +195,8 @@ async function search(applyFilters = false) {
 
     $("#resultados").innerHTML = rows.map(workerCard).join("");
     bindDirectButtons();
-  }
-
-  else {
+    bindWorkerProfiles($("#resultados"));
+  } else {
     if (!userSkills.length) {
       $("#resultados").innerHTML = `
         <article>
@@ -300,9 +337,14 @@ async function loadPanel() {
         .order("creado_en", { ascending: false }),
     ),
   ]);
-  const completedWork = applications.filter(a => a.publicaciones?.estado === "finalizada" && a.publicaciones?.trabajador_id === user.id).length;
+  const completedWork = applications.filter(
+    (a) =>
+      a.publicaciones?.estado === "finalizada" &&
+      a.publicaciones?.trabajador_id === user.id,
+  ).length;
   const summary = document.querySelector("#resumenTrabajos");
-  if (summary) summary.textContent = `${completedWork} trabajo${completedWork === 1 ? "" : "s"} finalizado${completedWork === 1 ? "" : "s"} mediante publicaciones`;
+  if (summary)
+    summary.textContent = `${completedWork} trabajo${completedWork === 1 ? "" : "s"} finalizado${completedWork === 1 ? "" : "s"} mediante publicaciones`;
   $("#misPublicaciones").innerHTML =
     jobs
       .map((p) =>
@@ -368,13 +410,13 @@ async function loadDetail(id) {
   $("#detalleContenido").innerHTML =
     jobCard(p, controls) +
     (reviews.length
-      ? `<p>Calificación registrada: ${"★".repeat(reviews[0].puntuacion)}${"☆".repeat(5-reviews[0].puntuacion)} · ${esc(reviews[0].comentario)}</p>`
+      ? `<p>Calificación registrada: ${"★".repeat(reviews[0].puntuacion)}${"☆".repeat(5 - reviews[0].puntuacion)} · ${esc(reviews[0].comentario)}</p>`
       : "") +
     "<h2>Postulantes</h2>" +
     apps
       .map(
         (a) =>
-          `<article><h2>${esc(a.perfiles.nombre)}</h2><p>${esc(a.mensaje)}</p>${p.trabajador_id === a.trabajador_id ? '<span class="tag">Seleccionado</span>' : ""}<div class="tabs"><button data-chat="${a.id}">Conversar</button>${p.estado === "abierta" ? `<button data-accept="${a.id}" class="primary">Seleccionar trabajador</button>` : ""}</div></article>`,
+          `<article><h2>${esc(a.perfiles.nombre)}</h2><p>${esc(a.mensaje)}</p>${p.trabajador_id === a.trabajador_id ? '<span class="tag">Seleccionado</span>' : ""}<div class="tabs"><button data-worker-profile="${esc(a.trabajador_id)}"><i class="fa-solid fa-star" aria-hidden="true"></i> Perfil y reseñas</button><button data-chat="${a.id}">Conversar</button>${p.estado === "abierta" ? `<button data-accept="${a.id}" class="primary">Seleccionar trabajador</button>` : ""}</div></article>`,
       )
       .join("");
   if (!apps.length)
@@ -383,6 +425,7 @@ async function loadDetail(id) {
       "<p>Aún no hay postulaciones.</p>",
     );
   bindDetails($("#detalleContenido"));
+  bindWorkerProfiles($("#detalleContenido"));
   $("#detalleContenido")
     .querySelectorAll("[data-accept]")
     .forEach(
@@ -417,9 +460,23 @@ async function loadDetail(id) {
           },
         );
   };
-  if ($('#programarTrabajo')) $('#programarTrabajo').onclick=()=>openForm('Programar horario',
-    '<label>Desde<input type="time" name="inicio" required></label><label>Hasta<input type="time" name="fin" required></label><p class="muted">Se usará la fecha de la publicación. Los horarios confirmados no pueden cruzarse.</p>',
-    async f=>{await checked(db.rpc('programar_publicacion',{p_publicacion:id,p_inicio:f.get('inicio'),p_fin:f.get('fin')}));notice('Horario guardado.');await loadDetail(id);});
+  if ($("#programarTrabajo"))
+    $("#programarTrabajo").onclick = () =>
+      openForm(
+        "Programar horario",
+        '<label>Desde<input type="time" name="inicio" required></label><label>Hasta<input type="time" name="fin" required></label><p class="muted">Se usará la fecha de la publicación. Los horarios confirmados no pueden cruzarse.</p>',
+        async (f) => {
+          await checked(
+            db.rpc("programar_publicacion", {
+              p_publicacion: id,
+              p_inicio: f.get("inicio"),
+              p_fin: f.get("fin"),
+            }),
+          );
+          notice("Horario guardado.");
+          await loadDetail(id);
+        },
+      );
   state("#cancelarTrabajo", "cancelada", "Cancelar publicación");
   state("#finalizarTrabajo", "finalizada", "Confirmar trabajo finalizado");
   if ($("#calificarTrabajo"))
@@ -446,100 +503,339 @@ let agendaOffset = 0;
 let agendaDiaElegido = null;
 let agendaReservas = [];
 let agendaExternos = [];
-function fechaLocal(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
-function semanaBase(offset=0) {
-  const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)+offset*7); return d;
+function fechaLocal(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
-function sumarDias(fecha, dias) {const d=new Date(fecha.getTime());d.setDate(d.getDate()+dias);return d;}
+function semanaBase(offset = 0) {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + offset * 7);
+  return d;
+}
+function sumarDias(fecha, dias) {
+  const d = new Date(fecha.getTime());
+  d.setDate(d.getDate() + dias);
+  return d;
+}
 async function loadAgenda() {
-  const panel=document.querySelector('#agendaDias'); if(!panel||!user||!db)return;
-  const lunes=semanaBase(agendaOffset), domingo=sumarDias(lunes,6);
-  const inicio=fechaLocal(lunes), fin=fechaLocal(domingo);
-  if(!agendaDiaElegido||agendaDiaElegido<inicio||agendaDiaElegido>fin) agendaDiaElegido=fechaLocal(agendaOffset===0?new Date():lunes);
-  const titulo=document.querySelector('#tituloSemana');
-  titulo.textContent=`${lunes.toLocaleDateString('es-PE',{day:'numeric',month:'short'})} – ${domingo.toLocaleDateString('es-PE',{day:'numeric',month:'short',year:'numeric'})}`;
-  const {data,error}=await db.from('reservas_agenda').select('id,titulo,fecha,hora_inicio,hora_fin,estado,cliente_id,trabajador_id,publicacion_id,conversacion_id').gte('fecha',inicio).lte('fecha',fin).or(`cliente_id.eq.${user.id},trabajador_id.eq.${user.id}`).order('hora_inicio');
-  const salida=document.querySelector('#agendaTrabajos');
-  if(error){salida.textContent='No se pudo cargar la agenda. Comprueba que ejecutaste database/06_calendario_reservas.sql en Supabase.';return;}
-  agendaReservas=data||[];
-  const {data:externos,error:errorExternos}=await db.from('trabajos_externos')
-    .select('id,titulo,fecha,hora_inicio,hora_fin,lugar,cliente,detalles,estado')
-    .eq('trabajador_id',user.id).gte('fecha',inicio).lte('fecha',fin).order('hora_inicio');
-  if(errorExternos){salida.textContent='No se pudieron cargar los trabajos externos. Ejecuta database/07_trabajos_externos.sql en Supabase.';return;}
-  agendaExternos=externos||[];
+  const panel = document.querySelector("#agendaDias");
+  if (!panel || !user || !db) return;
+  const lunes = semanaBase(agendaOffset),
+    domingo = sumarDias(lunes, 6);
+  const inicio = fechaLocal(lunes),
+    fin = fechaLocal(domingo);
+  if (!agendaDiaElegido || agendaDiaElegido < inicio || agendaDiaElegido > fin)
+    agendaDiaElegido = fechaLocal(agendaOffset === 0 ? new Date() : lunes);
+  const titulo = document.querySelector("#tituloSemana");
+  titulo.textContent = `${lunes.toLocaleDateString("es-PE", { day: "numeric", month: "short" })} – ${domingo.toLocaleDateString("es-PE", { day: "numeric", month: "short", year: "numeric" })}`;
+  const { data, error } = await db
+    .from("reservas_agenda")
+    .select(
+      "id,titulo,fecha,hora_inicio,hora_fin,estado,cliente_id,trabajador_id,publicacion_id,conversacion_id",
+    )
+    .gte("fecha", inicio)
+    .lte("fecha", fin)
+    .or(`cliente_id.eq.${user.id},trabajador_id.eq.${user.id}`)
+    .order("hora_inicio");
+  const salida = document.querySelector("#agendaTrabajos");
+  if (error) {
+    salida.textContent = "No se pudo cargar la agenda";
+    return;
+  }
+  agendaReservas = (data || []).filter((r) => r.estado !== "cancelada");
+  const { data: externos, error: errorExternos } = await db
+    .from("trabajos_externos")
+    .select(
+      "id,titulo,fecha,hora_inicio,hora_fin,lugar,cliente,detalles,estado",
+    )
+    .eq("trabajador_id", user.id)
+    .gte("fecha", inicio)
+    .lte("fecha", fin)
+    .order("hora_inicio");
+  if (errorExternos) {
+    salida.textContent = "No se pudieron cargar los trabajos externos.";
+    return;
+  }
+  agendaExternos = (externos || []).filter((e) => e.estado !== "cancelado");
   panel.replaceChildren();
-  for(let i=0;i<7;i++){
-    const fecha=sumarDias(lunes,i), key=fechaLocal(fecha), n=agendaReservas.filter(r=>r.fecha===key).length+agendaExternos.filter(r=>r.fecha===key&&r.estado!=='cancelado').length;
-    const boton=document.createElement('button');boton.type='button';boton.className='agenda-dia'+(agendaDiaElegido===key?' active':'');boton.setAttribute('aria-pressed',String(agendaDiaElegido===key));
-    const nombre=document.createElement('small');nombre.textContent=fecha.toLocaleDateString('es-PE',{weekday:'short'});
-    const numero=document.createElement('strong');numero.textContent=String(fecha.getDate());
-    const marcador=document.createElement('span');marcador.className='punto';marcador.textContent=n?`${n} trabajo${n===1?'':'s'}`:'Libre';
-    boton.append(nombre,numero,marcador);boton.onclick=()=>{agendaDiaElegido=key;renderAgenda();};panel.append(boton);
+  for (let i = 0; i < 7; i++) {
+    const fecha = sumarDias(lunes, i),
+      key = fechaLocal(fecha),
+      n =
+        agendaReservas.filter((r) => r.fecha === key).length +
+        agendaExternos.filter(
+          (r) => r.fecha === key && r.estado !== "cancelado",
+        ).length;
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className =
+      "agenda-dia" + (agendaDiaElegido === key ? " active" : "");
+    boton.setAttribute("aria-pressed", String(agendaDiaElegido === key));
+    const nombre = document.createElement("small");
+    nombre.textContent = fecha.toLocaleDateString("es-PE", {
+      weekday: "short",
+    });
+    const numero = document.createElement("strong");
+    numero.textContent = String(fecha.getDate());
+    const marcador = document.createElement("span");
+    marcador.className = "punto";
+    marcador.textContent = n ? `${n} trabajo${n === 1 ? "" : "s"}` : "Libre";
+    boton.append(nombre, numero, marcador);
+    boton.onclick = () => {
+      agendaDiaElegido = key;
+      renderAgenda();
+    };
+    panel.append(boton);
   }
   renderAgenda();
 }
-function renderAgenda(){
- const fecha=agendaDiaElegido, titulo=document.querySelector('#agendaDiaTitulo'), panel=document.querySelector('#agendaTrabajos');if(!panel)return;
- titulo.textContent=new Date(fecha+'T12:00:00').toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'});
- document.querySelectorAll('.agenda-dia').forEach((b,i)=>{const k=fechaLocal(sumarDias(semanaBase(agendaOffset),i));b.classList.toggle('active',k===fecha);b.setAttribute('aria-pressed',String(k===fecha));});
- panel.replaceChildren();const registros=agendaReservas.filter(r=>r.fecha===fecha);
- const externos=agendaExternos.filter(r=>r.fecha===fecha);
- if(!registros.length&&!externos.length){const p=document.createElement('p');p.className='muted';p.textContent='Sin reservas para este día.';panel.append(p);return;}
- for(const r of registros){
-   const box=document.createElement('article');box.className='agenda-tarjeta';
-   const h=document.createElement('h4');h.textContent=r.titulo;
-   const horario=document.createElement('p');horario.textContent=`${r.hora_inicio.slice(0,5)} – ${r.hora_fin.slice(0,5)} · ${r.trabajador_id===user.id?'Como trabajador':'Como cliente'}`;
-   const estado=document.createElement('span');estado.className='agenda-estado';estado.textContent=r.estado==='pendiente'?'Pendiente de aprobación':r.estado==='confirmada'?'✓ Confirmada':r.estado==='finalizada'?'Finalizada':'Cancelada';
-   const acciones=document.createElement('div');acciones.className='tabs';
-   const boton=(texto,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=texto;b.onclick=()=>run(fn,b);acciones.append(b);};
-   if(r.estado==='pendiente'&&r.trabajador_id===user.id) {boton('Aceptar',async()=>{await checked(db.rpc('responder_reserva_directa',{p_reserva:r.id,p_aceptar:true}));await loadAgenda();notice('Reserva confirmada.');});boton('Rechazar',async()=>{await checked(db.rpc('responder_reserva_directa',{p_reserva:r.id,p_aceptar:false}));await loadAgenda();});}
-   if(['pendiente','confirmada'].includes(r.estado))boton('Cancelar reserva',async()=>{if(!confirm('¿Cancelar esta reserva?'))return;await checked(db.rpc('cancelar_reserva_agenda',{p_reserva:r.id}));await loadAgenda();});
-   box.append(h,horario,estado,acciones);panel.append(box);
- }
- for(const e of externos){
-   const box=document.createElement('article');box.className='agenda-tarjeta agenda-externa';
-   const encabezado=document.createElement('div');encabezado.className='agenda-etiqueta';encabezado.textContent='Trabajo externo · Privado';
-   const h=document.createElement('h4');h.textContent=e.titulo;
-   const horario=document.createElement('p');horario.textContent=`${e.hora_inicio.slice(0,5)} – ${e.hora_fin.slice(0,5)} · ${e.estado==='programado'?'Programado':e.estado==='finalizado'?'Finalizado':'Cancelado'}`;
-   const ubicacion=document.createElement('p');ubicacion.textContent=e.lugar?`Lugar: ${e.lugar}`:'Lugar no especificado';
-   const cliente=document.createElement('p');cliente.textContent=e.cliente?`Contacto: ${e.cliente}`:'Sin contacto registrado';
-   const detalle=document.createElement('p');detalle.textContent=e.detalles?`Detalles: ${e.detalles}`:'Sin notas';
-   const acciones=document.createElement('div');acciones.className='tabs';
-   const boton=(titulo,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=titulo;b.onclick=()=>run(fn,b);acciones.append(b);};
-   if(e.estado==='programado'){
-     boton('Editar',()=>abrirTrabajoExterno(e));
-     boton('Marcar finalizado',async()=>{await checked(db.from('trabajos_externos').update({estado:'finalizado'}).eq('id',e.id).eq('trabajador_id',user.id));await loadAgenda();notice('Trabajo externo finalizado.');});
-     boton('Cancelar',async()=>{if(!confirm('¿Cancelar este trabajo externo?'))return;await checked(db.from('trabajos_externos').update({estado:'cancelado'}).eq('id',e.id).eq('trabajador_id',user.id));await loadAgenda();});
-   }
-   if(e.estado==='cancelado')boton('Eliminar',async()=>{if(!confirm('¿Eliminar este registro de tu agenda?'))return;await checked(db.from('trabajos_externos').delete().eq('id',e.id).eq('trabajador_id',user.id));await loadAgenda();});
-   box.append(encabezado,h,horario,ubicacion,cliente,detalle,acciones);panel.append(box);
- }
+function renderAgenda() {
+  const fecha = agendaDiaElegido,
+    titulo = document.querySelector("#agendaDiaTitulo"),
+    panel = document.querySelector("#agendaTrabajos");
+  if (!panel) return;
+  titulo.textContent = new Date(fecha + "T12:00:00").toLocaleDateString(
+    "es-PE",
+    { weekday: "long", day: "numeric", month: "long" },
+  );
+  document.querySelectorAll(".agenda-dia").forEach((b, i) => {
+    const k = fechaLocal(sumarDias(semanaBase(agendaOffset), i));
+    b.classList.toggle("active", k === fecha);
+    b.setAttribute("aria-pressed", String(k === fecha));
+  });
+  panel.replaceChildren();
+  const registros = agendaReservas.filter((r) => r.fecha === fecha);
+  const externos = agendaExternos.filter((r) => r.fecha === fecha);
+  if (!registros.length && !externos.length) {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent = "Sin reservas para este día.";
+    panel.append(p);
+    return;
+  }
+  for (const r of registros) {
+    const box = document.createElement("article");
+    box.className = "agenda-tarjeta";
+    const h = document.createElement("h4");
+    h.textContent = r.titulo;
+    const horario = document.createElement("p");
+    horario.textContent = `${r.hora_inicio.slice(0, 5)} – ${r.hora_fin.slice(0, 5)} · ${r.trabajador_id === user.id ? "Como trabajador" : "Como cliente"}`;
+    const estado = document.createElement("span");
+    estado.className = "agenda-estado";
+    estado.textContent =
+      r.estado === "pendiente"
+        ? "Pendiente de aprobación"
+        : r.estado === "confirmada"
+          ? "✓ Confirmada"
+          : r.estado === "finalizada"
+            ? "Finalizada"
+            : "Cancelada";
+    const acciones = document.createElement("div");
+    acciones.className = "tabs";
+    const boton = (texto, fn) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = texto;
+      b.onclick = () => run(fn, b);
+      acciones.append(b);
+    };
+    if (r.estado === "pendiente" && r.trabajador_id === user.id) {
+      boton("Aceptar", async () => {
+        await checked(
+          db.rpc("responder_reserva_directa", {
+            p_reserva: r.id,
+            p_aceptar: true,
+          }),
+        );
+        await loadAgenda();
+        notice("Reserva confirmada.");
+      });
+      boton("Rechazar", async () => {
+        await checked(
+          db.rpc("responder_reserva_directa", {
+            p_reserva: r.id,
+            p_aceptar: false,
+          }),
+        );
+        await loadAgenda();
+      });
+    }
+    if (["pendiente", "confirmada"].includes(r.estado))
+      boton("Cancelar reserva", async () => {
+        if (!confirm("¿Cancelar esta reserva?")) return;
+        await checked(db.rpc("cancelar_reserva_agenda", { p_reserva: r.id }));
+        await loadAgenda();
+      });
+    box.append(h, horario, estado, acciones);
+    panel.append(box);
+  }
+  for (const e of externos) {
+    const box = document.createElement("article");
+    box.className = "agenda-tarjeta agenda-externa";
+    const encabezado = document.createElement("div");
+    encabezado.className = "agenda-etiqueta";
+    encabezado.textContent = "Trabajo externo · Privado";
+    const h = document.createElement("h4");
+    h.textContent = e.titulo;
+    const horario = document.createElement("p");
+    horario.textContent = `${e.hora_inicio.slice(0, 5)} – ${e.hora_fin.slice(0, 5)} · ${e.estado === "programado" ? "Programado" : e.estado === "finalizado" ? "Finalizado" : "Cancelado"}`;
+    const ubicacion = document.createElement("p");
+    ubicacion.textContent = e.lugar
+      ? `Lugar: ${e.lugar}`
+      : "Lugar no especificado";
+    const cliente = document.createElement("p");
+    cliente.textContent = e.cliente
+      ? `Contacto: ${e.cliente}`
+      : "Sin contacto registrado";
+    const detalle = document.createElement("p");
+    detalle.textContent = e.detalles ? `Detalles: ${e.detalles}` : "Sin notas";
+    const acciones = document.createElement("div");
+    acciones.className = "tabs";
+    const boton = (titulo, fn) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = titulo;
+      b.onclick = () => run(fn, b);
+      acciones.append(b);
+    };
+    if (e.estado === "programado") {
+      boton("Editar", () => abrirTrabajoExterno(e));
+      boton("Marcar finalizado", async () => {
+        await checked(
+          db
+            .from("trabajos_externos")
+            .update({ estado: "finalizado" })
+            .eq("id", e.id)
+            .eq("trabajador_id", user.id),
+        );
+        await loadAgenda();
+        notice("Trabajo externo finalizado.");
+      });
+      boton("Cancelar", async () => {
+        if (!confirm("¿Cancelar este trabajo externo?")) return;
+        await checked(
+          db
+            .from("trabajos_externos")
+            .update({ estado: "cancelado" })
+            .eq("id", e.id)
+            .eq("trabajador_id", user.id),
+        );
+        await loadAgenda();
+      });
+    }
+    if (e.estado === "cancelado")
+      boton("Eliminar", async () => {
+        if (!confirm("¿Eliminar este registro de tu agenda?")) return;
+        await checked(
+          db
+            .from("trabajos_externos")
+            .delete()
+            .eq("id", e.id)
+            .eq("trabajador_id", user.id),
+        );
+        await loadAgenda();
+      });
+    box.append(encabezado, h, horario, ubicacion, cliente, detalle, acciones);
+    panel.append(box);
+  }
 }
-function abrirTrabajoExterno(externo=null){
- if(!user){notice('Inicia sesión para administrar tu agenda.');return;}
- const fecha=externo?.fecha||agendaDiaElegido||fechaLocal(new Date());
- const campos=`<label>Trabajo o servicio<input name="titulo" minlength="5" maxlength="120" required placeholder="Ej. Instalación de tomacorrientes"></label>
+function abrirTrabajoExterno(externo = null) {
+  if (!user) {
+    notice("Inicia sesión para administrar tu agenda.");
+    return;
+  }
+  const fecha = externo?.fecha || agendaDiaElegido || fechaLocal(new Date());
+  const campos = `<label>Trabajo o servicio<input name="titulo" minlength="5" maxlength="120" required placeholder="Ej. Instalación de tomacorrientes"></label>
  <label>Fecha<input type="date" name="fecha" required></label>
  <div class="agenda-form-horas"><label>Hora de inicio<input type="time" name="inicio" required></label><label>Hora de fin<input type="time" name="fin" required></label></div>
  <label>Lugar<input name="lugar" maxlength="250" placeholder="Dirección o distrito"></label>
  <label>Cliente o contacto (opcional)<input name="cliente" maxlength="120" placeholder="Nombre o referencia"></label>
  <label>Detalles (privados)<textarea name="detalles" maxlength="1500" rows="3" placeholder="Materiales, indicaciones, observaciones..."></textarea></label>
  <p class="muted">Este compromiso solo aparece en tu agenda. Bloquea su horario y no cuenta como trabajo verificado en ChambaCerca.</p>`;
- openForm(externo?'Editar trabajo externo':'Agregar trabajo externo',campos,async form=>{
-   const datos={titulo:String(form.get('titulo')||'').trim(),fecha:String(form.get('fecha')||''),hora_inicio:String(form.get('inicio')||''),hora_fin:String(form.get('fin')||''),lugar:String(form.get('lugar')||'').trim(),cliente:String(form.get('cliente')||'').trim(),detalles:String(form.get('detalles')||'').trim()};
-   if(datos.titulo.length<5||!datos.fecha||!datos.hora_inicio||!datos.hora_fin||datos.hora_fin<=datos.hora_inicio)throw new Error('Revisa el título, la fecha y el horario. La hora final debe ser posterior a la inicial.');
-   if(!externo)await checked(db.from('trabajos_externos').insert({...datos,trabajador_id:user.id}));
-   else await checked(db.from('trabajos_externos').update(datos).eq('id',externo.id).eq('trabajador_id',user.id));
-   const destino=new Date(datos.fecha+'T12:00:00');const base=semanaBase(0);
-   agendaOffset=Math.round((semanaBasePara(destino)-base)/604800000);
-   agendaDiaElegido=datos.fecha;
-   await loadAgenda();notice(externo?'Trabajo externo actualizado.':'Trabajo externo agregado a tu agenda.');
- });
- const form=document.querySelector('#accionForm');
- if(form){const valores={titulo:externo?.titulo||'',fecha,inicio:externo?.hora_inicio?.slice(0,5)||'09:00',fin:externo?.hora_fin?.slice(0,5)||'10:00',lugar:externo?.lugar||'',cliente:externo?.cliente||'',detalles:externo?.detalles||''};for(const [name,value] of Object.entries(valores)){const input=form.elements.namedItem(name);if(input)input.value=value;}}
+  openForm(
+    externo ? "Editar trabajo externo" : "Agregar trabajo externo",
+    campos,
+    async (form) => {
+      const datos = {
+        titulo: String(form.get("titulo") || "").trim(),
+        fecha: String(form.get("fecha") || ""),
+        hora_inicio: String(form.get("inicio") || ""),
+        hora_fin: String(form.get("fin") || ""),
+        lugar: String(form.get("lugar") || "").trim(),
+        cliente: String(form.get("cliente") || "").trim(),
+        detalles: String(form.get("detalles") || "").trim(),
+      };
+      if (
+        datos.titulo.length < 5 ||
+        !datos.fecha ||
+        !datos.hora_inicio ||
+        !datos.hora_fin ||
+        datos.hora_fin <= datos.hora_inicio
+      )
+        throw new Error(
+          "Revisa el título, la fecha y el horario. La hora final debe ser posterior a la inicial.",
+        );
+      if (!externo)
+        await checked(
+          db
+            .from("trabajos_externos")
+            .insert({ ...datos, trabajador_id: user.id }),
+        );
+      else
+        await checked(
+          db
+            .from("trabajos_externos")
+            .update(datos)
+            .eq("id", externo.id)
+            .eq("trabajador_id", user.id),
+        );
+      const destino = new Date(datos.fecha + "T12:00:00");
+      const base = semanaBase(0);
+      agendaOffset = Math.round((semanaBasePara(destino) - base) / 604800000);
+      agendaDiaElegido = datos.fecha;
+      await loadAgenda();
+      notice(
+        externo
+          ? "Trabajo externo actualizado."
+          : "Trabajo externo agregado a tu agenda.",
+      );
+    },
+  );
+  const form = document.querySelector("#accionForm");
+  if (form) {
+    const valores = {
+      titulo: externo?.titulo || "",
+      fecha,
+      inicio: externo?.hora_inicio?.slice(0, 5) || "09:00",
+      fin: externo?.hora_fin?.slice(0, 5) || "10:00",
+      lugar: externo?.lugar || "",
+      cliente: externo?.cliente || "",
+      detalles: externo?.detalles || "",
+    };
+    for (const [name, value] of Object.entries(valores)) {
+      const input = form.elements.namedItem(name);
+      if (input) input.value = value;
+    }
+  }
 }
-function semanaBasePara(fecha){const d=new Date(fecha.getTime());d.setHours(12,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getTime();}
-const botonExterno=document.querySelector('#agregarTrabajoExterno');if(botonExterno)botonExterno.onclick=()=>abrirTrabajoExterno();
-document.querySelector('#semanaAnterior').onclick=()=>{agendaOffset--;run(loadAgenda);};
-document.querySelector('#semanaSiguiente').onclick=()=>{agendaOffset++;run(loadAgenda);};
-document.querySelector('#semanaActual').onclick=()=>{agendaOffset=0;agendaDiaElegido=null;run(loadAgenda);};
+function semanaBasePara(fecha) {
+  const d = new Date(fecha.getTime());
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d.getTime();
+}
+const botonExterno = document.querySelector("#agregarTrabajoExterno");
+if (botonExterno) botonExterno.onclick = () => abrirTrabajoExterno();
+document.querySelector("#semanaAnterior").onclick = () => {
+  agendaOffset--;
+  run(loadAgenda);
+};
+document.querySelector("#semanaSiguiente").onclick = () => {
+  agendaOffset++;
+  run(loadAgenda);
+};
+document.querySelector("#semanaActual").onclick = () => {
+  agendaOffset = 0;
+  agendaDiaElegido = null;
+  run(loadAgenda);
+};
